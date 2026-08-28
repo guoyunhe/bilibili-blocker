@@ -1,29 +1,39 @@
 {
   "name": "wxt-react-starter",
-  "description": "manifest.json description",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "manifest.json description",
   "type": "module",
   "scripts": {
-    "dev": "wxt",
-    "dev:firefox": "wxt -b firefox",
     "build": "wxt build",
     "build:firefox": "wxt build -b firefox",
-    "zip": "wxt zip",
-    "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare"
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "postinstall": "wxt prepare",
+    "prepare": "husky",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox"
   },
   "dependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
+    "@guoyunhe/oxfmt-config": "^1.1.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@wxt-dev/module-react": "^1.1.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.4.1",
+    "oxfmt": "^0.65.0",
     "typescript": "^5.9.3",
     "web-ext": "^10.5.0",
     "wxt": "^0.21.3"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,json,jsonc,css,scss,less,htm,html,md,mdx,yaml,yml}": "oxfmt --write"
   }
 }
