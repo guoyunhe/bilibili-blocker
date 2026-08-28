@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Bilibili Blocker"
+  },
+  "extensionDescription": {
+    "message": "在 Bilibili 上模糊屏蔽创作者视频卡片"
+  },
+  "loading": {
+    "message": "加载中..."
+  },
+  "enabledCount": {
+    "message": "已启用 $1/$2 个规则"
+  },
+  "refresh": {
+    "message": "刷新规则"
+  },
+  "refreshing": {
+    "message": "刷新中..."
+  },
+  "clickbait": {
+    "message": "标题党"
+  },
+  "aislop": {
+    "message": "AI 垃圾"
+  },
+  "catfish": {
+    "message": "钓鱼内容"
+  }
+}

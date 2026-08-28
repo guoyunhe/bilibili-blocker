@@ -78,33 +78,31 @@ export default defineBackground(() => {
 
   // Handle messages from content script and popup
   browser.runtime.onMessage.addListener((message, _sender) => {
-    if (message.type === 'GET_RULES') {
-      return getActiveRules();
-    }
-    if (message.type === 'GET_CONFIG') {
-      return storage.getItem<Record<string, boolean>>('local:config');
-    }
-    if (message.type === 'SET_CONFIG') {
-      return storage.setItem('local:config', message.config);
-    }
-    if (message.type === 'GET_RULE_SOURCES') {
-      return RULE_SOURCES.map((s) => ({ name: s.name, url: s.url }));
-    }
-    if (message.type === 'REFRESH_RULES') {
-      // Force refresh all enabled rules
-      return (async () => {
-        const config = await storage.getItem<Record<string, boolean>>('local:config');
-        for (const source of RULE_SOURCES) {
-          const enabled = config?.[source.name] ?? true;
-          if (!enabled) continue;
-          try {
-            const ids = await fetchRules(source.url);
-            await setCachedRules(source, ids);
-          } catch (err) {
-            console.error(`Failed to refresh rules for ${source.name}:`, err);
+    switch (message.type) {
+      case 'GET_RULES':
+        return getActiveRules();
+      case 'GET_CONFIG':
+        return storage.getItem<Record<string, boolean>>('local:config');
+      case 'SET_CONFIG':
+        return storage.setItem('local:config', message.config);
+      case 'GET_RULE_SOURCES':
+        return Promise.resolve(RULE_SOURCES.map((s) => ({ name: s.name, url: s.url })));
+      case 'REFRESH_RULES':
+        return (async () => {
+          const config = await storage.getItem<Record<string, boolean>>('local:config');
+          for (const source of RULE_SOURCES) {
+            const enabled = config?.[source.name] ?? true;
+            if (!enabled) continue;
+            try {
+              const ids = await fetchRules(source.url);
+              await setCachedRules(source, ids);
+            } catch (err) {
+              console.error(`Failed to refresh rules for ${source.name}:`, err);
+            }
           }
-        }
-      })();
+        })();
+      default:
+        return Promise.resolve(null);
     }
   });
 });

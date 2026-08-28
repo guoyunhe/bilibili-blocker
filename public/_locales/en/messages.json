@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "Bilibili Blocker"
+  },
+  "extensionDescription": {
+    "message": "Blur video cards from blocked creators on Bilibili"
+  },
+  "loading": {
+    "message": "Loading..."
+  },
+  "enabledCount": {
+    "message": "Active: $1/$2 rules"
+  },
+  "refresh": {
+    "message": "Refresh Rules"
+  },
+  "refreshing": {
+    "message": "Refreshing..."
+  },
+  "clickbait": {
+    "message": "Clickbait"
+  },
+  "aislop": {
+    "message": "AI Slop"
+  },
+  "catfish": {
+    "message": "Catfish"
+  }
+}

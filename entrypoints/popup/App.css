@@ -47,10 +47,35 @@
 }
 
 .toggle {
+  appearance: none;
   width: 18px;
   height: 18px;
-  accent-color: #fb7299;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
   cursor: pointer;
+  display: grid;
+  place-content: center;
+  flex-shrink: 0;
+}
+
+.toggle::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background: #fff;
+  transform: scale(0);
+  transition: transform 0.1s ease;
+}
+
+.toggle:checked {
+  background: #fb7299;
+  border-color: #fb7299;
+}
+
+.toggle:checked::before {
+  transform: scale(1);
 }
 
 .rule-name {

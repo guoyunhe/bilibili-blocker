@@ -24,7 +24,7 @@ function App() {
           browser.runtime.sendMessage({ type: 'GET_RULE_SOURCES' }),
           browser.runtime.sendMessage({ type: 'GET_CONFIG' }),
         ]);
-        setSources(s as RuleSource[]);
+        setSources((s as RuleSource[]) ?? []);
         setConfig((c as Config) ?? {});
       } catch (err) {
         console.error('Failed to load config:', err);
@@ -72,7 +72,7 @@ function App() {
   if (loading) {
     return (
       <div className='app-container'>
-        <p className='loading'>加载中...</p>
+        <p className='loading'>{browser.i18n.getMessage('loading')}</p>
       </div>
     );
   }
@@ -84,7 +84,7 @@ function App() {
       <header className='app-header'>
         <h1>Bilibili Blocker</h1>
         <p className='subtitle'>
-          已启用 {enabledCount}/{sources.length} 个规则
+          {browser.i18n.getMessage('enabledCount', [String(enabledCount), String(sources.length)])}
         </p>
       </header>
 
@@ -100,7 +100,7 @@ function App() {
                   checked={enabled}
                   onChange={(e) => handleToggle(source.name, e.target.checked)}
                 />
-                <span className='rule-name'>{source.name}</span>
+                <span className='rule-name'>{browser.i18n.getMessage(source.name)}</span>
               </label>
             </li>
           );
@@ -109,7 +109,7 @@ function App() {
 
       <footer className='app-footer'>
         <button className='refresh-btn' onClick={handleRefresh} disabled={refreshing}>
-          {refreshing ? '刷新中...' : '刷新规则'}
+          {refreshing ? browser.i18n.getMessage('refreshing') : browser.i18n.getMessage('refresh')}
         </button>
       </footer>
     </div>
