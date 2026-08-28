@@ -1,42 +1,90 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.app-container {
+  width: 280px;
+  padding: 16px;
+  font-size: 14px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+}
+
+.app-header h1 {
+  font-size: 18px;
+  margin: 0 0 4px;
+  color: #fb7299;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.rule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rule-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.rule-item:last-child {
+  border-bottom: none;
+}
+
+.rule-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle {
+  width: 18px;
+  height: 18px;
+  accent-color: #fb7299;
+  cursor: pointer;
+}
+
+.rule-name {
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.app-footer {
+  margin-top: 16px;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #54bc4ae0);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.refresh-btn {
+  background: #fb7299;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.refresh-btn:hover {
+  opacity: 0.85;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
+.loading {
+  text-align: center;
   color: #888;
+  padding: 20px 0;
 }

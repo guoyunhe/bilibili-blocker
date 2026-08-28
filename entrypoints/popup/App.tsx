@@ -1,34 +1,118 @@
-import { useState } from 'react';
-import reactLogo from '@/assets/react.svg';
-import wxtLogo from '/wxt.svg';
+import { useCallback, useEffect, useState } from 'react';
+
 import './App.css';
 
+interface RuleSource {
+  name: string;
+  url: string;
+}
+
+interface Config {
+  [sourceName: string]: boolean;
+}
+
 function App() {
-  const [count, setCount] = useState(0);
+  const [sources, setSources] = useState<RuleSource[]>([]);
+  const [config, setConfig] = useState<Config>({});
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [s, c] = await Promise.all([
+          browser.runtime.sendMessage({ type: 'GET_RULE_SOURCES' }),
+          browser.runtime.sendMessage({ type: 'GET_CONFIG' }),
+        ]);
+        setSources(s as RuleSource[]);
+        setConfig((c as Config) ?? {});
+      } catch (err) {
+        console.error('Failed to load config:', err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleToggle = useCallback(
+    async (name: string, enabled: boolean) => {
+      const newConfig = { ...config, [name]: enabled };
+      setConfig(newConfig);
+      await browser.runtime.sendMessage({ type: 'SET_CONFIG', config: newConfig });
+      // Notify all tabs to refresh rules
+      const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
+      const rules = await browser.runtime.sendMessage({ type: 'GET_RULES' });
+      for (const tab of tabs) {
+        if (tab.id) {
+          browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED', ids: rules });
+        }
+      }
+    },
+    [config],
+  );
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await browser.runtime.sendMessage({ type: 'REFRESH_RULES' });
+      const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
+      const rules = await browser.runtime.sendMessage({ type: 'GET_RULES' });
+      for (const tab of tabs) {
+        if (tab.id) {
+          browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED', ids: rules });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to refresh rules:', err);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <div className='app-container'>
+        <p className='loading'>加载中...</p>
+      </div>
+    );
+  }
+
+  const enabledCount = Object.values(config).filter((v) => v !== false).length;
 
   return (
-    <>
-      <div>
-        <a href="https://wxt.dev" target="_blank">
-          <img src={wxtLogo} className="logo" alt="WXT logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>WXT + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+    <div className='app-container'>
+      <header className='app-header'>
+        <h1>Bilibili Blocker</h1>
+        <p className='subtitle'>
+          已启用 {enabledCount}/{sources.length} 个规则
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the WXT and React logos to learn more
-      </p>
-    </>
+      </header>
+
+      <ul className='rule-list'>
+        {sources.map((source) => {
+          const enabled = config[source.name] ?? true;
+          return (
+            <li key={source.name} className='rule-item'>
+              <label className='rule-label'>
+                <input
+                  type='checkbox'
+                  className='toggle'
+                  checked={enabled}
+                  onChange={(e) => handleToggle(source.name, e.target.checked)}
+                />
+                <span className='rule-name'>{source.name}</span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+
+      <footer className='app-footer'>
+        <button className='refresh-btn' onClick={handleRefresh} disabled={refreshing}>
+          {refreshing ? '刷新中...' : '刷新规则'}
+        </button>
+      </footer>
+    </div>
   );
 }
 
