@@ -21,12 +21,21 @@
     "message": "标题党"
   },
   "aislop": {
-    "message": "AI 垃圾"
+    "message": "AI 泔水"
   },
   "catfish": {
     "message": "钓鱼内容"
   },
   "mainstream": {
     "message": "主流媒体"
+  },
+  "spam": {
+    "message": "垃圾内容"
+  },
+  "fakenews": {
+    "message": "假新闻"
+  },
+  "troll": {
+    "message": "对立引战"
   }
 }

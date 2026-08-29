@@ -28,5 +28,14 @@
   },
   "mainstream": {
     "message": "Mainstream Media"
+  },
+  "spam": {
+    "message": "Spam"
+  },
+  "fakenews": {
+    "message": "Fake News"
+  },
+  "troll": {
+    "message": "Troll"
   }
 }

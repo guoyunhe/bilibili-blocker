@@ -9,6 +9,9 @@ interface CachedRules {
 }
 
 const RULE_SOURCES: RuleSource[] = [
+  { name: 'spam', url: 'https://bilibili-blocker.netlify.app/rules/spam.txt' },
+  { name: 'fakenews', url: 'https://bilibili-blocker.netlify.app/rules/fakenews.txt' },
+  { name: 'troll', url: 'https://bilibili-blocker.netlify.app/rules/troll.txt' },
   { name: 'clickbait', url: 'https://bilibili-blocker.netlify.app/rules/clickbait.txt' },
   { name: 'aislop', url: 'https://bilibili-blocker.netlify.app/rules/aislop.txt' },
   { name: 'catfish', url: 'https://bilibili-blocker.netlify.app/rules/catfish.txt' },
