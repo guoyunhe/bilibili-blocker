@@ -46,7 +46,9 @@ async function processVideoCards(blockedIds: Set<string>) {
     const uid = match[1];
 
     if (blockedIds.has(uid)) {
-      const card = link.closest('.feed-card, .bili-feed-card, .video-page-card-small');
+      const card = link.closest(
+        '.feed-card, .bili-feed-card, .video-page-card-small, .bili-video-card',
+      );
 
       if (card && !card.classList.contains('bilibili-blocker-blurred')) {
         console.log(`Blurring card for UID ${uid}`);
