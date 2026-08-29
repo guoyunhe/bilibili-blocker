@@ -12,6 +12,7 @@ const RULE_SOURCES: RuleSource[] = [
   { name: 'clickbait', url: 'https://bilibili-blocker.netlify.app/rules/clickbait.txt' },
   { name: 'aislop', url: 'https://bilibili-blocker.netlify.app/rules/aislop.txt' },
   { name: 'catfish', url: 'https://bilibili-blocker.netlify.app/rules/catfish.txt' },
+  { name: 'mainstream', url: 'https://bilibili-blocker.netlify.app/rules/mainstream.txt' },
 ];
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours

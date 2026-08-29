@@ -25,5 +25,8 @@
   },
   "catfish": {
     "message": "钓鱼内容"
+  },
+  "mainstream": {
+    "message": "主流媒体"
   }
 }
