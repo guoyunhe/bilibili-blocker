@@ -14,6 +14,7 @@ const RULE_SOURCES: RuleSource[] = [
   { name: 'troll', url: 'https://bilibili-blocker.netlify.app/rules/troll.txt' },
   { name: 'clickbait', url: 'https://bilibili-blocker.netlify.app/rules/clickbait.txt' },
   { name: 'aislop', url: 'https://bilibili-blocker.netlify.app/rules/aislop.txt' },
+  { name: 'aivoice', url: 'https://bilibili-blocker.netlify.app/rules/aivoice.txt' },
   { name: 'catfish', url: 'https://bilibili-blocker.netlify.app/rules/catfish.txt' },
   { name: 'mainstream', url: 'https://bilibili-blocker.netlify.app/rules/mainstream.txt' },
 ];
