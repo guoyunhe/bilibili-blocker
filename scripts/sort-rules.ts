@@ -9,7 +9,7 @@ async function sortRules(file: string) {
   const lines = content.split('\n');
 
   const comments: string[] = [];
-  const ids: string[] = [];
+  const ids: Set<string> = new Set();
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -17,15 +17,17 @@ async function sortRules(file: string) {
     if (trimmed.startsWith('#')) {
       comments.push(trimmed);
     } else {
-      ids.push(trimmed);
+      ids.add(trimmed);
     }
   }
 
-  ids.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const sortedIds = Array.from(ids).sort((a, b) =>
+    a.localeCompare(b, undefined, { numeric: true }),
+  );
 
-  const sorted = [...comments, ...ids, ''].join('\n');
+  const sorted = [...comments, ...sortedIds, ''].join('\n');
   await writeFile(path, sorted, 'utf-8');
-  console.log(`Sorted ${file}: ${ids.length} IDs`);
+  console.log(`Sorted ${file}: ${sortedIds.length} IDs`);
 }
 
 async function main() {
