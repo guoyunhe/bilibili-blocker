@@ -11,7 +11,7 @@ export default defineConfig({
     host_permissions: ['*://*.bilibili.com/*', 'https://bilibili-blocker.netlify.app/*'],
     browser_specific_settings: {
       gecko: {
-        id: 'npmjscom-enhancer@guoyunhe.me',
+        id: 'bilibili-blocker@guoyunhe.me',
         strict_min_version: '115.0',
         data_collection_permissions: {
           required: ['none'],
