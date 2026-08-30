@@ -15,6 +15,9 @@
     "icon": "tsx scripts/make-icons.ts",
     "postinstall": "wxt prepare",
     "prepare": "husky",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox"
   },
@@ -24,8 +27,10 @@
   },
   "devDependencies": {
     "@guoyunhe/oxfmt-config": "^1.1.0",
+    "@types/node": "^26.4.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitest/ui": "^4.1.11",
     "@wxt-dev/module-react": "^1.1.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.4.1",
@@ -33,6 +38,7 @@
     "sharp": "^0.35.4",
     "tsx": "^4.23.12",
     "typescript": "^5.9.3",
+    "vitest": "^4.1.11",
     "web-ext": "^10.5.0",
     "wxt": "^0.21.3"
   },
