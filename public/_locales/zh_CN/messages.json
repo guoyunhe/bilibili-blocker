@@ -3,7 +3,7 @@
     "message": "Bilibili Blocker"
   },
   "extensionDescription": {
-    "message": "在 Bilibili 上模糊屏蔽创作者视频卡片"
+    "message": "屏蔽 B 站的标题党、AI 泔水、AI 配音、钓鱼内容、主流媒体、垃圾内容、假新闻和对立引战等内容。"
   },
   "loading": {
     "message": "加载中..."
