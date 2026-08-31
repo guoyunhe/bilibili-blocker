@@ -3,7 +3,7 @@
     "message": "Bilibili Blocker"
   },
   "extensionDescription": {
-    "message": "Blocks clickbait, AI slop, AI voice, catfish, mainstream media, spam, fake news, and trolling content on Bilibili."
+    "message": "Blocks specific types of content on Bilibili."
   },
   "loading": {
     "message": "Loading..."
