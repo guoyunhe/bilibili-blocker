@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import './App.css';
+import type { RuleSource } from '../../types';
 
-interface RuleSource {
-  name: string;
-  url: string;
-}
+import './App.css';
 
 interface Config {
   [sourceName: string]: boolean;
@@ -24,6 +21,7 @@ function App() {
           browser.runtime.sendMessage({ type: 'GET_RULE_SOURCES' }),
           browser.runtime.sendMessage({ type: 'GET_CONFIG' }),
         ]);
+        console.log('loaded sources', s);
         setSources((s as RuleSource[]) ?? []);
         setConfig((c as Config) ?? {});
       } catch (err) {
@@ -100,7 +98,8 @@ function App() {
                   checked={enabled}
                   onChange={(e) => handleToggle(source.name, e.target.checked)}
                 />
-                <span className='rule-name'>{browser.i18n.getMessage(source.name)}</span>
+                <span className='rule-name'>{browser.i18n.getMessage(source.name as any)}</span>
+                <span className='rule-count'>{source.count}</span>
               </label>
             </li>
           );

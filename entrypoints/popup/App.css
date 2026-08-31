@@ -83,6 +83,11 @@
   text-transform: capitalize;
 }
 
+.rule-count {
+  margin-left: auto;
+  color: #888;
+}
+
 .app-footer {
   margin-top: 16px;
   text-align: center;

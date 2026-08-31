@@ -1,7 +1,4 @@
-interface RuleSource {
-  name: string;
-  url: string;
-}
+import type { RuleSource } from '../types';
 
 interface CachedRules {
   ids: string[];
@@ -9,14 +6,18 @@ interface CachedRules {
 }
 
 const RULE_SOURCES: RuleSource[] = [
-  { name: 'spam', url: 'https://bilibili-blocker.netlify.app/rules/spam.txt' },
-  { name: 'fakenews', url: 'https://bilibili-blocker.netlify.app/rules/fakenews.txt' },
-  { name: 'troll', url: 'https://bilibili-blocker.netlify.app/rules/troll.txt' },
-  { name: 'clickbait', url: 'https://bilibili-blocker.netlify.app/rules/clickbait.txt' },
-  { name: 'aislop', url: 'https://bilibili-blocker.netlify.app/rules/aislop.txt' },
-  { name: 'aivoice', url: 'https://bilibili-blocker.netlify.app/rules/aivoice.txt' },
-  { name: 'catfish', url: 'https://bilibili-blocker.netlify.app/rules/catfish.txt' },
-  { name: 'mainstream', url: 'https://bilibili-blocker.netlify.app/rules/mainstream.txt' },
+  { name: 'clickbait', url: 'https://bilibili-blocker.netlify.app/rules/clickbait.txt', count: 0 },
+  { name: 'aislop', url: 'https://bilibili-blocker.netlify.app/rules/aislop.txt', count: 0 },
+  { name: 'aivoice', url: 'https://bilibili-blocker.netlify.app/rules/aivoice.txt', count: 0 },
+  { name: 'catfish', url: 'https://bilibili-blocker.netlify.app/rules/catfish.txt', count: 0 },
+  { name: 'troll', url: 'https://bilibili-blocker.netlify.app/rules/troll.txt', count: 0 },
+  // { name: 'fakenews', url: 'https://bilibili-blocker.netlify.app/rules/fakenews.txt', count: 0 },
+  // { name: 'spam', url: 'https://bilibili-blocker.netlify.app/rules/spam.txt', count: 0 },
+  // {
+  //   name: 'mainstream',
+  //   url: 'https://bilibili-blocker.netlify.app/rules/mainstream.txt',
+  //   count: 0,
+  // },
 ];
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
@@ -52,7 +53,6 @@ async function getActiveRules(): Promise<string[]> {
   for (const source of RULE_SOURCES) {
     // Check if source is enabled (default: true)
     const enabled = config?.[source.name] ?? true;
-    if (!enabled) continue;
 
     let cached = await getCachedRules(source);
     const isExpired = !cached || Date.now() - cached.timestamp > CACHE_DURATION;
@@ -64,15 +64,14 @@ async function getActiveRules(): Promise<string[]> {
         cached = { ids, timestamp: Date.now() };
       } catch (err) {
         console.error(`Failed to fetch rules for ${source.name}:`, err);
-        // Use expired cache if available
-        if (cached) {
-          allIds.push(...cached.ids);
-        }
-        continue;
       }
     }
 
-    allIds.push(...cached!.ids);
+    source.count = cached?.ids.length ?? 0;
+
+    if (cached && enabled) {
+      allIds.push(...cached!.ids);
+    }
   }
 
   return allIds;
@@ -80,6 +79,8 @@ async function getActiveRules(): Promise<string[]> {
 
 export default defineBackground(() => {
   console.log('Bilibili Blocker background started', { id: browser.runtime.id });
+
+  getActiveRules();
 
   // Handle messages from content script and popup
   browser.runtime.onMessage.addListener((message, _sender) => {
@@ -91,7 +92,7 @@ export default defineBackground(() => {
       case 'SET_CONFIG':
         return storage.setItem('local:config', message.config);
       case 'GET_RULE_SOURCES':
-        return Promise.resolve(RULE_SOURCES.map((s) => ({ name: s.name, url: s.url })));
+        return Promise.resolve(RULE_SOURCES);
       case 'REFRESH_RULES':
         return (async () => {
           const config = await storage.getItem<Record<string, boolean>>('local:config');
