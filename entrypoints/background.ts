@@ -95,13 +95,11 @@ export default defineBackground(() => {
         return Promise.resolve(RULE_SOURCES);
       case 'REFRESH_RULES':
         return (async () => {
-          const config = await storage.getItem<Record<string, boolean>>('local:config');
           for (const source of RULE_SOURCES) {
-            const enabled = config?.[source.name] ?? true;
-            if (!enabled) continue;
             try {
               const ids = await fetchRules(source.url);
               await setCachedRules(source, ids);
+              source.count = ids.length;
             } catch (err) {
               console.error(`Failed to refresh rules for ${source.name}:`, err);
             }
