@@ -52,7 +52,9 @@ function App() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await browser.runtime.sendMessage({ type: 'REFRESH_RULES' });
+      const refreshedSources = await browser.runtime.sendMessage({ type: 'REFRESH_RULES' });
+      setSources(refreshedSources);
+      // Notify all tabs to refresh rules
       const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
       const rules = await browser.runtime.sendMessage({ type: 'GET_RULES' });
       for (const tab of tabs) {

@@ -104,6 +104,7 @@ export default defineBackground(() => {
               console.error(`Failed to refresh rules for ${source.name}:`, err);
             }
           }
+          return RULE_SOURCES;
         })();
       default:
         return Promise.resolve(null);
