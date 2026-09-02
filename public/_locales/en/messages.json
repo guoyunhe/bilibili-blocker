@@ -17,26 +17,41 @@
   "refreshing": {
     "message": "Refreshing..."
   },
-  "clickbait": {
-    "message": "Clickbait"
-  },
   "aislop": {
     "message": "AI Slop"
   },
   "aivoice": {
     "message": "AI Voice"
   },
+  "clickbait": {
+    "message": "Clickbait"
+  },
+  "clipping": {
+    "message": "Clipping (unauthorized)"
+  },
+  "copycat": {
+    "message": "Copycat (unauthorized)"
+  },
   "catfish": {
     "message": "Catfish"
+  },
+  "fakenews": {
+    "message": "Fake News"
+  },
+  "finance": {
+    "message": "Finance"
   },
   "mainstream": {
     "message": "Mainstream Media"
   },
+  "religion": {
+    "message": "Religion"
+  },
+  "superstition": {
+    "message": "Superstition"
+  },
   "spam": {
     "message": "Spam"
-  },
-  "fakenews": {
-    "message": "Fake News"
   },
   "troll": {
     "message": "Troll"

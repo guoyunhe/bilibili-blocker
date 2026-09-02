@@ -100,7 +100,7 @@ function App() {
                   checked={enabled}
                   onChange={(e) => handleToggle(source.name, e.target.checked)}
                 />
-                <span className='rule-name'>{browser.i18n.getMessage(source.name as any)}</span>
+                <span className='rule-name'>{source.displayName}</span>
                 <span className='rule-count'>{source.count}</span>
               </label>
             </li>

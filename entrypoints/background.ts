@@ -5,20 +5,26 @@ interface CachedRules {
   timestamp: number;
 }
 
-const RULE_SOURCES: RuleSource[] = [
-  { name: 'clickbait', url: 'https://bilibili-blocker.netlify.app/rules/clickbait.txt', count: 0 },
-  { name: 'aislop', url: 'https://bilibili-blocker.netlify.app/rules/aislop.txt', count: 0 },
-  { name: 'aivoice', url: 'https://bilibili-blocker.netlify.app/rules/aivoice.txt', count: 0 },
-  { name: 'catfish', url: 'https://bilibili-blocker.netlify.app/rules/catfish.txt', count: 0 },
-  { name: 'troll', url: 'https://bilibili-blocker.netlify.app/rules/troll.txt', count: 0 },
-  // { name: 'fakenews', url: 'https://bilibili-blocker.netlify.app/rules/fakenews.txt', count: 0 },
-  // { name: 'spam', url: 'https://bilibili-blocker.netlify.app/rules/spam.txt', count: 0 },
-  // {
-  //   name: 'mainstream',
-  //   url: 'https://bilibili-blocker.netlify.app/rules/mainstream.txt',
-  //   count: 0,
-  // },
-];
+const RULE_SOURCES: RuleSource[] = (
+  [
+    'aislop',
+    'aivoice',
+    'clickbait',
+    'clipping',
+    'copycat',
+    'catfish',
+    'fakenews',
+    'finance',
+    'religion',
+    'superstition',
+    'troll',
+  ] as const
+).map((item) => ({
+  name: item,
+  displayName: browser.i18n.getMessage(item),
+  url: `https://bilibili-blocker.netlify.app/rules/${item}.txt`,
+  count: 0,
+}));
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
