@@ -77,15 +77,11 @@ function App() {
     );
   }
 
-  const enabledCount = Object.values(config).filter((v) => v !== false).length;
-
   return (
     <div className='app-container'>
       <header className='app-header'>
-        <h1>Bilibili Blocker</h1>
-        <p className='subtitle'>
-          {browser.i18n.getMessage('enabledCount', [String(enabledCount), String(sources.length)])}
-        </p>
+        <h1>{browser.i18n.getMessage('extensionName')}</h1>
+        <p>{browser.i18n.getMessage('extensionDescription')}</p>
       </header>
 
       <ul className='rule-list'>

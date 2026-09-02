@@ -3,13 +3,10 @@
     "message": "Bilibili Blocker"
   },
   "extensionDescription": {
-    "message": "屏蔽 B 站上特定类型的内容。"
+    "message": "屏蔽 B 站上特定类型的内容"
   },
   "loading": {
     "message": "加载中..."
-  },
-  "enabledCount": {
-    "message": "已启用 $1/$2 个规则"
   },
   "refresh": {
     "message": "刷新规则"
