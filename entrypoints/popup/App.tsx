@@ -89,23 +89,25 @@ function App() {
       </header>
 
       <ul className='rule-list'>
-        {sources.map((source) => {
-          const enabled = config[source.name] ?? true;
-          return (
-            <li key={source.name} className='rule-item'>
-              <label className='rule-label'>
-                <input
-                  type='checkbox'
-                  className='toggle'
-                  checked={enabled}
-                  onChange={(e) => handleToggle(source.name, e.target.checked)}
-                />
-                <span className='rule-name'>{source.displayName}</span>
-                <span className='rule-count'>{source.count}</span>
-              </label>
-            </li>
-          );
-        })}
+        {sources
+          .toSorted((a, b) => a.displayName.localeCompare(b.displayName))
+          .map((source) => {
+            const enabled = config[source.name] ?? true;
+            return (
+              <li key={source.name} className='rule-item'>
+                <label className='rule-label'>
+                  <input
+                    type='checkbox'
+                    className='toggle'
+                    checked={enabled}
+                    onChange={(e) => handleToggle(source.name, e.target.checked)}
+                  />
+                  <span className='rule-name'>{source.displayName}</span>
+                  <span className='rule-count'>{source.count}</span>
+                </label>
+              </li>
+            );
+          })}
       </ul>
 
       <footer className='app-footer'>
