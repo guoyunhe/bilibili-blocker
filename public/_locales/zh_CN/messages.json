@@ -3,7 +3,7 @@
     "message": "Bilibili Blocker"
   },
   "extensionDescription": {
-    "message": "屏蔽 B 站上特定类型的内容"
+    "message": "按用户 ID 屏蔽 B 站上特定类型的内容"
   },
   "loading": {
     "message": "加载中..."

@@ -3,7 +3,7 @@
     "message": "Bilibili Blocker"
   },
   "extensionDescription": {
-    "message": "Blocks specific types of content on Bilibili"
+    "message": "Blocks specific types of content on Bilibili by UID"
   },
   "loading": {
     "message": "Loading..."
