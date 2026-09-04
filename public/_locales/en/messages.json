@@ -44,6 +44,9 @@
   "religion": {
     "message": "Religion"
   },
+  "scam": {
+    "message": "Scam"
+  },
   "superstition": {
     "message": "Superstition"
   },

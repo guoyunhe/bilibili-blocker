@@ -44,6 +44,9 @@
   "religion": {
     "message": "宗教"
   },
+  "scam": {
+    "message": "欺诈风险"
+  },
   "spam": {
     "message": "垃圾内容"
   },
