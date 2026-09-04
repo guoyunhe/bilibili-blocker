@@ -19,8 +19,6 @@
 
 ## 屏蔽规则
 
-根据 UP 主的用户 ID 黑名单，屏蔽该 UP 主的所有视频。
-
 - [aislop](./rules/aislop.txt) - AI 泔水（低质量的 AI 生成视频）
 - [aivoice](./rules/aivoice.txt) - AI 配音
 - [clickbait](./rules/clickbait.txt) - 标题党（用夸张标题或封面骗点击）
