@@ -41,11 +41,8 @@
   "mainstream": {
     "message": "Mainstream Media"
   },
-  "religion": {
-    "message": "Religion"
-  },
   "superstition": {
-    "message": "Superstition"
+    "message": "Superstition and Religion"
   },
   "spam": {
     "message": "Spam"

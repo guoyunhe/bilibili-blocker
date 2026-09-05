@@ -26,9 +26,8 @@
 - [copycat](./rules/copycat.txt) - 搬运（未授权）
 - [fakenews](./rules/fakenews.txt) - 假新闻/阴谋论
 - [finance](./rules/finance.txt) - 投资理财（无从业资质不负责任的理财投资教学、晒投资收益、宣传投资项目）
-- [religion](./rules/religion.txt) - 宗教（不含历史科普类）
 - [spam](./rules/spam.txt) - 垃圾内容
-- [superstition](./rules/superstition.txt) - 封建迷信、伪科学（包含算命占卜、鬼神玄学、无执业医师资格的医疗建议）
+- [superstition](./rules/superstition.txt) - 封建迷信、伪科学与宗教（包含算命占卜、鬼神玄学、无执业医师资格的医疗建议，不含历史科普类）
 - [troll](./rules/troll.txt) - 对立引战
 
 ## FAQ

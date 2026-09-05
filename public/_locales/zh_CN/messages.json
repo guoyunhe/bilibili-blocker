@@ -41,14 +41,11 @@
   "mainstream": {
     "message": "主流媒体"
   },
-  "religion": {
-    "message": "宗教"
-  },
   "spam": {
     "message": "垃圾内容"
   },
   "superstition": {
-    "message": "封建迷信"
+    "message": "封建迷信与宗教"
   },
   "troll": {
     "message": "对立引战"
