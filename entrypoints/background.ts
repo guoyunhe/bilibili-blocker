@@ -10,7 +10,6 @@ const RULE_SOURCES: RuleSource[] = (
     'aislop',
     'aivoice',
     'clickbait',
-    'clipping',
     'copycat',
     'catfish',
     'fakenews',

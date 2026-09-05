@@ -22,8 +22,7 @@
 - [aislop](./rules/aislop.txt) - AI 泔水（低质量的 AI 生成视频）
 - [aivoice](./rules/aivoice.txt) - AI 配音
 - [clickbait](./rules/clickbait.txt) - 标题党（用夸张标题或封面骗点击）
-- [clipping](./rules/clipping.txt) - 切片（未授权）
-- [copycat](./rules/copycat.txt) - 搬运（未授权）
+- [copycat](./rules/copycat.txt) - 搬运与切片（未授权）
 - [fakenews](./rules/fakenews.txt) - 假新闻/阴谋论
 - [finance](./rules/finance.txt) - 投资理财（无从业资质不负责任的理财投资教学、晒投资收益、宣传投资项目）
 - [spam](./rules/spam.txt) - 垃圾内容

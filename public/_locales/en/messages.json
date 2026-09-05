@@ -23,11 +23,8 @@
   "clickbait": {
     "message": "Clickbait"
   },
-  "clipping": {
-    "message": "Clipping (unauthorized)"
-  },
   "copycat": {
-    "message": "Copycat (unauthorized)"
+    "message": "Copycat and Clipping (unauthorized)"
   },
   "catfish": {
     "message": "Catfish"

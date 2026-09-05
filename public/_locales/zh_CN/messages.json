@@ -26,11 +26,8 @@
   "clickbait": {
     "message": "标题党"
   },
-  "clipping": {
-    "message": "切片(未授权)"
-  },
   "copycat": {
-    "message": "搬运(未授权)"
+    "message": "搬运与切片(未授权)"
   },
   "fakenews": {
     "message": "假新闻"
