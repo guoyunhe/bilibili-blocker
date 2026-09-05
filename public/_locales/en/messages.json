@@ -36,16 +36,13 @@
     "message": "Fake News"
   },
   "finance": {
-    "message": "Finance"
+    "message": "Finance and Scams"
   },
   "mainstream": {
     "message": "Mainstream Media"
   },
   "religion": {
     "message": "Religion"
-  },
-  "scam": {
-    "message": "Scam"
   },
   "superstition": {
     "message": "Superstition"

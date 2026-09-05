@@ -36,16 +36,13 @@
     "message": "假新闻"
   },
   "finance": {
-    "message": "投资理财"
+    "message": "投资理财与欺诈风险"
   },
   "mainstream": {
     "message": "主流媒体"
   },
   "religion": {
     "message": "宗教"
-  },
-  "scam": {
-    "message": "欺诈风险"
   },
   "spam": {
     "message": "垃圾内容"
