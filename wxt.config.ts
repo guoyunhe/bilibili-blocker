@@ -9,6 +9,12 @@ export default defineConfig({
     default_locale: 'en',
     permissions: ['storage'],
     host_permissions: ['*://*.bilibili.com/*', 'https://bilibili-blocker.netlify.app/*'],
+    web_accessible_resources: [
+      {
+        resources: ['icon/*.png'],
+        matches: ['<all_urls>'],
+      },
+    ],
     browser_specific_settings: {
       gecko: {
         id: 'bilibili-blocker@guoyunhe.me',
