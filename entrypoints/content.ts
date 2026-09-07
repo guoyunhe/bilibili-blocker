@@ -29,7 +29,12 @@ function blurElement(el: Element) {
 }
 
 async function processVideoCards(blockedIds: Set<string>) {
-  if (blockedIds.size === 0) return;
+  if (blockedIds.size === 0) {
+    document.querySelectorAll('.bilibili-blocker-blurred').forEach((el) => {
+      el.classList.remove('bilibili-blocker-blurred');
+    });
+    return;
+  }
 
   // Find all links to user spaces
   const links = document.querySelectorAll('a[href*="space.bilibili.com"]');
@@ -73,11 +78,6 @@ export default defineContentScript({
     }
 
     const blockedIdSet = new Set(blockedIds);
-    if (blockedIdSet.size === 0) {
-      console.log('No blocked IDs, skipping processing');
-      return;
-    }
-
     injectBlurStyle();
 
     // Process existing cards
@@ -101,8 +101,6 @@ export default defineContentScript({
         for (const id of newIds) blockedIdSet.add(id);
 
         if (blockedIdSet.size === 0) {
-          removeBlurStyle();
-          // Remove blur from all elements
           document.querySelectorAll('.bilibili-blocker-blurred').forEach((el) => {
             el.classList.remove('bilibili-blocker-blurred');
           });

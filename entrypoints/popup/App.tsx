@@ -1,29 +1,38 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { RuleSource } from '../../types';
+import type { RuleSource, UserEntry, UserLists } from '../../types';
 
 import './App.css';
+import BlacklistTab from './BlacklistTab';
+import RulesTab from './RulesTab';
+import WhitelistTab from './WhitelistTab';
 
 interface Config {
   [sourceName: string]: boolean;
 }
+
+type Tab = 'rules' | 'blacklist' | 'whitelist';
 
 function App() {
   const [sources, setSources] = useState<RuleSource[]>([]);
   const [config, setConfig] = useState<Config>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>('rules');
+  const [lists, setLists] = useState<UserLists>({ blacklist: [], whitelist: [] });
 
   useEffect(() => {
     (async () => {
       try {
-        const [s, c] = await Promise.all([
+        const [s, c, l] = await Promise.all([
           browser.runtime.sendMessage({ type: 'GET_RULE_SOURCES' }),
           browser.runtime.sendMessage({ type: 'GET_CONFIG' }),
+          browser.runtime.sendMessage({ type: 'GET_USER_LISTS' }),
         ]);
         console.log('loaded sources', s);
         setSources((s as RuleSource[]) ?? []);
         setConfig((c as Config) ?? {});
+        setLists((l as UserLists) ?? { blacklist: [], whitelist: [] });
       } catch (err) {
         console.error('Failed to load config:', err);
       } finally {
@@ -31,6 +40,19 @@ function App() {
       }
     })();
   }, []);
+
+  const handleUserEntry = useCallback(
+    async (list: 'blacklist' | 'whitelist', entry: UserEntry, enabled: boolean) => {
+      const nextLists = await browser.runtime.sendMessage({
+        type: 'SET_USER_ENTRY',
+        list,
+        entry,
+        enabled,
+      });
+      setLists(nextLists as UserLists);
+    },
+    [],
+  );
 
   const handleToggle = useCallback(
     async (name: string, enabled: boolean) => {
@@ -84,33 +106,46 @@ function App() {
         <p>{browser.i18n.getMessage('extensionDescription')}</p>
       </header>
 
-      <ul className='rule-list'>
-        {sources
-          .toSorted((a, b) => a.displayName.localeCompare(b.displayName))
-          .map((source) => {
-            const enabled = config[source.name] ?? true;
-            return (
-              <li key={source.name} className='rule-item'>
-                <label className='rule-label'>
-                  <input
-                    type='checkbox'
-                    className='toggle'
-                    checked={enabled}
-                    onChange={(e) => handleToggle(source.name, e.target.checked)}
-                  />
-                  <span className='rule-name'>{source.displayName}</span>
-                  <span className='rule-count'>{source.count}</span>
-                </label>
-              </li>
-            );
-          })}
-      </ul>
-
-      <footer className='app-footer'>
-        <button className='refresh-btn' onClick={handleRefresh} disabled={refreshing}>
-          {refreshing ? browser.i18n.getMessage('refreshing') : browser.i18n.getMessage('refresh')}
+      <nav className='tabs' aria-label='Popup sections'>
+        <button
+          className={activeTab === 'rules' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('rules')}
+        >
+          {browser.i18n.getMessage('rulesTab')}
         </button>
-      </footer>
+        <button
+          className={activeTab === 'blacklist' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('blacklist')}
+        >
+          {browser.i18n.getMessage('blacklistTab')} ({lists.blacklist.length})
+        </button>
+        <button
+          className={activeTab === 'whitelist' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('whitelist')}
+        >
+          {browser.i18n.getMessage('whitelistTab')} ({lists.whitelist.length})
+        </button>
+      </nav>
+
+      {activeTab === 'rules' ? (
+        <RulesTab
+          sources={sources}
+          config={config}
+          refreshing={refreshing}
+          onToggle={handleToggle}
+          onRefresh={handleRefresh}
+        />
+      ) : activeTab === 'blacklist' ? (
+        <BlacklistTab
+          entries={lists.blacklist}
+          onRemove={(entry) => handleUserEntry('blacklist', entry, false)}
+        />
+      ) : (
+        <WhitelistTab
+          entries={lists.whitelist}
+          onRemove={(entry) => handleUserEntry('whitelist', entry, false)}
+        />
+      )}
     </div>
   );
 }

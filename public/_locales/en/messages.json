@@ -14,6 +14,36 @@
   "refreshing": {
     "message": "Refreshing..."
   },
+  "rulesTab": {
+    "message": "Rules"
+  },
+  "blacklistTab": {
+    "message": "Blacklist"
+  },
+  "whitelistTab": {
+    "message": "Whitelist"
+  },
+  "uidPlaceholder": {
+    "message": "UID"
+  },
+  "usernamePlaceholder": {
+    "message": "Username (optional)"
+  },
+  "add": {
+    "message": "Add"
+  },
+  "remove": {
+    "message": "Remove"
+  },
+  "blockedStatus": {
+    "message": "Blocked"
+  },
+  "block": {
+    "message": "Block"
+  },
+  "unblock": {
+    "message": "Unblock"
+  },
   "aislop": {
     "message": "AI Slop"
   },
