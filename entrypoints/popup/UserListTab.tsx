@@ -11,7 +11,11 @@ function UserListTab({ entries, onRemove }: UserListTabProps) {
       {entries.map((entry) => (
         <li key={entry.uid} className='user-item'>
           <span>
-            <strong>{entry.username}</strong>
+            <strong>
+              <a href={`https://space.bilibili.com/${entry.uid}`} target='_blank' rel='noreferrer'>
+                {entry.username}
+              </a>
+            </strong>
             <small>{entry.uid}</small>
           </span>
           <button type='button' className='remove-btn' onClick={() => onRemove(entry)}>

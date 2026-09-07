@@ -85,6 +85,16 @@
   white-space: nowrap;
 }
 
+.user-item a {
+  color: #333;
+  text-decoration: none;
+}
+
+.user-item a:hover {
+  color: #fb7299;
+  text-decoration: underline;
+}
+
 .user-item small {
   color: #888;
   margin-top: 2px;
