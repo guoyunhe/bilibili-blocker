@@ -3,7 +3,7 @@
     "message": "Bilibili Blocker"
   },
   "extensionDescription": {
-    "message": "Blocks specific types of content on Bilibili by UID"
+    "message": "Block low-quality or unwanted content by account UID with subscribed rules and custom blacklists and whitelists."
   },
   "loading": {
     "message": "Loading..."

@@ -3,7 +3,7 @@
     "message": "Bilibili Blocker"
   },
   "extensionDescription": {
-    "message": "按用户 ID 屏蔽 B 站上特定类型的内容"
+    "message": "按账号 UID 屏蔽低质量或不感兴趣的内容，支持订阅规则和自定义黑名单、白名单。"
   },
   "loading": {
     "message": "加载中..."
