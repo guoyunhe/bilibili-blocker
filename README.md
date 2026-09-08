@@ -6,6 +6,7 @@
 
 - [下载 Chrome 插件](https://chromewebstore.google.com/detail/bilibili-blocker/egfeldkfhdbjcmpjbipdaafnopgpglje)
 - [下载 Firefox 插件](https://addons.mozilla.org/zh-CN/firefox/addon/bilibili-blocker/)
+- [加入 Telegram 群组](https://t.me/bilibili_blocker)
 
 ## 屏幕截图
 
