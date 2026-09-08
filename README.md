@@ -10,13 +10,12 @@
 
 ## 屏幕截图
 
-![home](./screenshots/1-home.png)
-
-![video](./screenshots/2-video.png)
-
-![search](./screenshots/3-search.png)
-
-![popup](./screenshots/4-popup.png)
+<p>
+	<a href='./screenshots/1-home.png' target='_blank'><img src='./screenshots/1-home.png' alt='home' width='200' /></a>
+	<a href='./screenshots/2-video.png' target='_blank'><img src='./screenshots/2-video.png' alt='video' width='200' /></a>
+	<a href='./screenshots/3-search.png' target='_blank'><img src='./screenshots/3-search.png' alt='search' width='200' /></a>
+	<a href='./screenshots/4-popup.png' target='_blank'><img src='./screenshots/4-popup.png' alt='popup' width='200' /></a>
+</p>
 
 ## 屏蔽规则
 
