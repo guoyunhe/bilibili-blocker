@@ -1,5 +1,7 @@
 # Bilibili Blocker
 
+[English](./README.en.md) | [繁體中文](./README.zh_TW.md)
+
 按账号 UID 屏蔽低质量或不感兴趣的内容，支持订阅规则和自定义黑名单、白名单。
 
 ## 下载安装
