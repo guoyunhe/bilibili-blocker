@@ -1,0 +1,77 @@
+{
+  "extensionName": {
+    "message": "Bilibili Blocker"
+  },
+  "extensionDescription": {
+    "message": "依帳號 UID 封鎖低品質或不感興趣的內容，支援訂閱規則和自訂黑名單、白名單。"
+  },
+  "loading": {
+    "message": "載入中..."
+  },
+  "refresh": {
+    "message": "重新整理規則"
+  },
+  "refreshing": {
+    "message": "重新整理中..."
+  },
+  "rulesTab": {
+    "message": "訂閱規則"
+  },
+  "blacklistTab": {
+    "message": "黑名單"
+  },
+  "whitelistTab": {
+    "message": "白名單"
+  },
+  "uidPlaceholder": {
+    "message": "UID"
+  },
+  "usernamePlaceholder": {
+    "message": "使用者名稱（選填）"
+  },
+  "add": {
+    "message": "新增"
+  },
+  "remove": {
+    "message": "移除"
+  },
+  "blockedStatus": {
+    "message": "已封鎖"
+  },
+  "block": {
+    "message": "封鎖"
+  },
+  "unblock": {
+    "message": "解除封鎖"
+  },
+  "aislop": {
+    "message": "AI 垃圾內容"
+  },
+  "aivoice": {
+    "message": "AI 配音"
+  },
+  "catfish": {
+    "message": "釣魚內容"
+  },
+  "clickbait": {
+    "message": "標題黨"
+  },
+  "copycat": {
+    "message": "搬運與剪輯（未授權）"
+  },
+  "fakenews": {
+    "message": "假新聞"
+  },
+  "finance": {
+    "message": "投資理財與詐騙風險"
+  },
+  "spam": {
+    "message": "垃圾內容"
+  },
+  "superstition": {
+    "message": "迷信與宗教"
+  },
+  "troll": {
+    "message": "對立引戰"
+  }
+}
