@@ -17,6 +17,7 @@
     "icon": "tsx scripts/make-icons.ts",
     "postinstall": "wxt prepare",
     "prepare": "husky",
+    "prezip": "pnpm run build",
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
