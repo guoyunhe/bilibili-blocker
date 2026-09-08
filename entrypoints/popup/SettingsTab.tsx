@@ -4,21 +4,26 @@ interface SettingsTabProps {
 }
 
 function SettingsTab({ config, onToggle }: SettingsTabProps) {
-  const enabled = config.hideFloorCard ?? false;
+  const settings = [
+    { key: 'hideFloorCard', message: 'hideFloorCard' },
+    { key: 'hideLiveRecommend', message: 'hideLiveRecommend' },
+  ] as const;
 
   return (
     <ul className='rule-list'>
-      <li className='rule-item'>
-        <label className='rule-label'>
-          <input
-            type='checkbox'
-            className='toggle'
-            checked={enabled}
-            onChange={(event) => onToggle('hideFloorCard', event.target.checked)}
-          />
-          <span className='rule-name'>{browser.i18n.getMessage('hideFloorCard')}</span>
-        </label>
-      </li>
+      {settings.map(({ key, message }) => (
+        <li key={key} className='rule-item'>
+          <label className='rule-label'>
+            <input
+              type='checkbox'
+              className='toggle'
+              checked={config[key] ?? false}
+              onChange={(event) => onToggle(key, event.target.checked)}
+            />
+            <span className='rule-name'>{browser.i18n.getMessage(message)}</span>
+          </label>
+        </li>
+      ))}
     </ul>
   );
 }

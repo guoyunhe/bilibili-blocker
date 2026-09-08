@@ -29,6 +29,9 @@
   "hideFloorCard": {
     "message": "隱藏推薦內容"
   },
+  "hideLiveRecommend": {
+    "message": "隱藏直播推薦"
+  },
   "uidPlaceholder": {
     "message": "UID"
   },

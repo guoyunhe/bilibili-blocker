@@ -29,6 +29,9 @@
   "hideFloorCard": {
     "message": "Hide Recommended Content"
   },
+  "hideLiveRecommend": {
+    "message": "Hide Live Recommendations"
+  },
   "uidPlaceholder": {
     "message": "UID"
   },

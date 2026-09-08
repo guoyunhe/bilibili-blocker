@@ -62,12 +62,13 @@ function App() {
       await browser.runtime.sendMessage({ type: 'SET_CONFIG', config: newConfig });
       // Notify all tabs to refresh rules
       const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
-      if (name === 'hideFloorCard') {
+      if (name === 'hideFloorCard' || name === 'hideLiveRecommend') {
         for (const tab of tabs) {
           if (tab.id) {
             browser.tabs.sendMessage(tab.id, {
               type: 'SETTING_UPDATED',
-              hideFloorCard: enabled,
+              hideFloorCard: newConfig.hideFloorCard ?? false,
+              hideLiveRecommend: newConfig.hideLiveRecommend ?? false,
             });
           }
         }
