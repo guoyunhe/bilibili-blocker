@@ -15,7 +15,7 @@
 
 ![search](./screenshots/3-search.png)
 
-![popup](./screenshots/4-popup.jpg)
+![popup](./screenshots/4-popup.png)
 
 ## 屏蔽规则
 
