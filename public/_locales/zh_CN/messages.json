@@ -23,6 +23,12 @@
   "whitelistTab": {
     "message": "白名单"
   },
+  "settingsTab": {
+    "message": "设置"
+  },
+  "hideFloorCard": {
+    "message": "隐藏推荐内容"
+  },
   "uidPlaceholder": {
     "message": "UID"
   },

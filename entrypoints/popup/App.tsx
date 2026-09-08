@@ -5,13 +5,14 @@ import type { RuleSource, UserEntry, UserLists } from '../../types';
 import './App.css';
 import BlacklistTab from './BlacklistTab';
 import RulesTab from './RulesTab';
+import SettingsTab from './SettingsTab';
 import WhitelistTab from './WhitelistTab';
 
 interface Config {
   [sourceName: string]: boolean;
 }
 
-type Tab = 'rules' | 'blacklist' | 'whitelist';
+type Tab = 'rules' | 'blacklist' | 'whitelist' | 'settings';
 
 function App() {
   const [sources, setSources] = useState<RuleSource[]>([]);
@@ -61,10 +62,25 @@ function App() {
       await browser.runtime.sendMessage({ type: 'SET_CONFIG', config: newConfig });
       // Notify all tabs to refresh rules
       const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
+      if (name === 'hideFloorCard') {
+        for (const tab of tabs) {
+          if (tab.id) {
+            browser.tabs.sendMessage(tab.id, {
+              type: 'SETTING_UPDATED',
+              hideFloorCard: enabled,
+            });
+          }
+        }
+        return;
+      }
+
       const rules = await browser.runtime.sendMessage({ type: 'GET_RULES' });
       for (const tab of tabs) {
         if (tab.id) {
-          browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED', ids: rules });
+          browser.tabs.sendMessage(tab.id, {
+            type: 'RULES_UPDATED',
+            ids: rules,
+          });
         }
       }
     },
@@ -81,7 +97,10 @@ function App() {
       const rules = await browser.runtime.sendMessage({ type: 'GET_RULES' });
       for (const tab of tabs) {
         if (tab.id) {
-          browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED', ids: rules });
+          browser.tabs.sendMessage(tab.id, {
+            type: 'RULES_UPDATED',
+            ids: rules,
+          });
         }
       }
     } catch (err) {
@@ -89,7 +108,7 @@ function App() {
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [config]);
 
   if (loading) {
     return (
@@ -148,6 +167,12 @@ function App() {
         >
           {browser.i18n.getMessage('whitelistTab')} ({lists.whitelist.length})
         </button>
+        <button
+          className={activeTab === 'settings' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('settings')}
+        >
+          {browser.i18n.getMessage('settingsTab')}
+        </button>
       </nav>
 
       {activeTab === 'rules' ? (
@@ -163,11 +188,13 @@ function App() {
           entries={lists.blacklist}
           onRemove={(entry) => handleUserEntry('blacklist', entry, false)}
         />
-      ) : (
+      ) : activeTab === 'whitelist' ? (
         <WhitelistTab
           entries={lists.whitelist}
           onRemove={(entry) => handleUserEntry('whitelist', entry, false)}
         />
+      ) : (
+        <SettingsTab config={config} onToggle={handleToggle} />
       )}
     </div>
   );

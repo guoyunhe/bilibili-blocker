@@ -99,7 +99,6 @@ export default defineContentScript({
         const newIds = message.ids as string[];
         blockedIdSet.clear();
         for (const id of newIds) blockedIdSet.add(id);
-
         if (blockedIdSet.size === 0) {
           document.querySelectorAll('.bilibili-blocker-blurred').forEach((el) => {
             el.classList.remove('bilibili-blocker-blurred');

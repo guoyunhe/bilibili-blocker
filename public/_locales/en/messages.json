@@ -23,6 +23,12 @@
   "whitelistTab": {
     "message": "Whitelist"
   },
+  "settingsTab": {
+    "message": "Settings"
+  },
+  "hideFloorCard": {
+    "message": "Hide Recommended Content"
+  },
   "uidPlaceholder": {
     "message": "UID"
   },
