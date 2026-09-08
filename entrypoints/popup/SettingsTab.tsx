@@ -6,7 +6,8 @@ interface SettingsTabProps {
 function SettingsTab({ config, onToggle }: SettingsTabProps) {
   const settings = [
     { key: 'hideFloorCard', message: 'hideFloorCard' },
-    { key: 'hideLiveRecommend', message: 'hideLiveRecommend' },
+    { key: 'hideLiveCard', message: 'hideLiveCard' },
+    { key: 'hideRecommendedSwipe', message: 'hideRecommendedSwipe' },
   ] as const;
 
   return (

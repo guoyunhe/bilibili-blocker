@@ -27,10 +27,13 @@
     "message": "设置"
   },
   "hideFloorCard": {
-    "message": "隐藏推荐内容"
+    "message": "隐藏会员内容卡片"
   },
-  "hideLiveRecommend": {
-    "message": "隐藏直播推荐"
+  "hideLiveCard": {
+    "message": "隐藏直播卡片"
+  },
+  "hideRecommendedSwipe": {
+    "message": "隐藏推荐轮播"
   },
   "uidPlaceholder": {
     "message": "UID"

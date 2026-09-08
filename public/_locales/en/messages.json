@@ -27,10 +27,13 @@
     "message": "Settings"
   },
   "hideFloorCard": {
-    "message": "Hide Recommended Content"
+    "message": "Hide Premium Content Card"
   },
-  "hideLiveRecommend": {
-    "message": "Hide Live Recommendations"
+  "hideLiveCard": {
+    "message": "Hide Live Stream Card"
+  },
+  "hideRecommendedSwipe": {
+    "message": "Hide Recommended Swipe"
   },
   "uidPlaceholder": {
     "message": "UID"
