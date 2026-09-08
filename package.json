@@ -6,7 +6,8 @@
   "description": "manifest.json description",
   "type": "module",
   "scripts": {
-    "build": "wxt build",
+    "build": "pnpm run build:chrome && pnpm run build:firefox",
+    "build:chrome": "wxt build -b chrome",
     "build:firefox": "wxt build -b firefox",
     "compile": "tsc --noEmit",
     "dev": "wxt",
@@ -19,7 +20,8 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
-    "zip": "wxt zip",
+    "zip": "pnpm run zip:chrome && pnpm run zip:firefox",
+    "zip:chrome": "wxt zip -b chrome",
     "zip:firefox": "wxt zip -b firefox"
   },
   "dependencies": {
