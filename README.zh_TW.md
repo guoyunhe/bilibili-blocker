@@ -2,6 +2,9 @@
 
 [简体中文](./README.md) | [English](./README.en.md)
 
+[![Chrome users](https://badgen.net/chrome-web-store/users/egfeldkfhdbjcmpjbipdaafnopgpglje?label=Chrome%20users)](https://chromewebstore.google.com/detail/bilibili-blocker/egfeldkfhdbjcmpjbipdaafnopgpglje)
+[![Firefox users](https://badgen.net/amo/users/bilibili-blocker?label=Firefox%20users)](https://addons.mozilla.org/zh-CN/firefox/addon/bilibili-blocker/)
+
 依帳號 UID 封鎖低品質或不感興趣的內容，支援訂閱規則和自訂黑名單、白名單。
 
 ## 下載安裝

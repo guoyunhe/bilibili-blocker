@@ -2,6 +2,9 @@
 
 [简体中文](./README.md) | [繁體中文](./README.zh_TW.md)
 
+[![Chrome users](https://badgen.net/chrome-web-store/users/egfeldkfhdbjcmpjbipdaafnopgpglje?label=Chrome%20users)](https://chromewebstore.google.com/detail/bilibili-blocker/egfeldkfhdbjcmpjbipdaafnopgpglje)
+[![Firefox users](https://badgen.net/amo/users/bilibili-blocker?label=Firefox%20users)](https://addons.mozilla.org/zh-CN/firefox/addon/bilibili-blocker/)
+
 Block low-quality or unwanted content by account UID, with subscribed rules and custom blacklists and whitelists.
 
 ## Installation
