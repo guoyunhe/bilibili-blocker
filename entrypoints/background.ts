@@ -14,6 +14,7 @@ const RULE_SOURCES: RuleSource[] = (
     'catfish',
     'fakenews',
     'finance',
+    'sales',
     'spam',
     'superstition',
     'troll',

@@ -39,6 +39,7 @@ Block low-quality or unwanted content by account UID, with subscribed rules and 
 - [copycat](./rules/copycat.txt) - Unauthorized reposts and clips
 - [fakenews](./rules/fakenews.txt) - Fake news and conspiracy theories
 - [finance](./rules/finance.txt) - Financial advice and scam risks
+- [sales](./rules/sales.txt) - Sales pitches and product promotion
 - [spam](./rules/spam.txt) - Spam content
 - [superstition](./rules/superstition.txt) - Superstition and religion
 - [troll](./rules/troll.txt) - Provocative and antagonistic content

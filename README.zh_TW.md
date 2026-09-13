@@ -39,6 +39,7 @@
 - [copycat](./rules/copycat.txt) - 未授權搬運與剪輯
 - [fakenews](./rules/fakenews.txt) - 假新聞與陰謀論
 - [finance](./rules/finance.txt) - 投資理財與詐騙風險
+- [sales](./rules/sales.txt) - 推銷帶貨（直播帶貨、業配、引流推銷商品或課程）
 - [spam](./rules/spam.txt) - 垃圾內容
 - [superstition](./rules/superstition.txt) - 迷信與宗教
 - [troll](./rules/troll.txt) - 對立與引戰內容

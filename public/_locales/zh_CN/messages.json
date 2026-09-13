@@ -77,6 +77,9 @@
   "finance": {
     "message": "投资理财与欺诈风险"
   },
+  "sales": {
+    "message": "推销带货"
+  },
   "spam": {
     "message": "垃圾内容"
   },
