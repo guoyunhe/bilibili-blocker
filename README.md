@@ -33,16 +33,20 @@
 
 ## 屏蔽规则
 
-- [aislop](./rules/aislop.txt) - AI 泔水（低质量的 AI 生成视频）
-- [aivoice](./rules/aivoice.txt) - AI 配音
-- [clickbait](./rules/clickbait.txt) - 标题党（用夸张标题或封面骗点击）
-- [copycat](./rules/copycat.txt) - 搬运与切片（未授权）
-- [fakenews](./rules/fakenews.txt) - 假新闻/阴谋论
-- [finance](./rules/finance.txt) - 投资理财（无从业资质不负责任的理财投资教学、晒投资收益、宣传投资项目）
-- [sales](./rules/sales.txt) - 推销带货（直播带货、软广恰饭、引流推销商品或课程）
-- [spam](./rules/spam.txt) - 垃圾内容
-- [superstition](./rules/superstition.txt) - 封建迷信、伪科学与宗教（包含算命占卜、鬼神玄学、无执业医师资格的医疗建议，不含历史科普类）
-- [troll](./rules/troll.txt) - 对立引战
+- [aislop](./ext/rules/aislop.txt) - AI 泔水（低质量的 AI 生成视频）
+- [aivoice](./ext/rules/aivoice.txt) - AI 配音
+- [clickbait](./ext/rules/clickbait.txt) - 标题党（用夸张标题或封面骗点击）
+- [copycat](./ext/rules/copycat.txt) - 搬运与切片（未授权）
+- [fakenews](./ext/rules/fakenews.txt) - 假新闻/阴谋论
+- [finance](./ext/rules/finance.txt) - 投资理财（无从业资质不负责任的理财投资教学、晒投资收益、宣传投资项目）
+- [sales](./ext/rules/sales.txt) - 推销带货（直播带货、软广恰饭、引流推销商品或课程）
+- [spam](./ext/rules/spam.txt) - 垃圾内容
+- [superstition](./ext/rules/superstition.txt) - 封建迷信、伪科学与宗教（包含算命占卜、鬼神玄学、无执业医师资格的医疗建议，不含历史科普类）
+- [troll](./ext/rules/troll.txt) - 对立引战
+
+## 开发
+
+插件代码位于 `ext/`，使用 pnpm workspace 管理。在仓库根目录运行 `pnpm install` 安装依赖，使用 `pnpm dev` 启动开发模式，使用 `pnpm build` 构建 Chrome 和 Firefox 插件。
 
 ## FAQ
 

@@ -1,53 +1,33 @@
 {
-  "name": "bilibili-blocker",
-  "displayName": "BiliBili Blocker",
-  "version": "0.6.0",
+  "name": "bilibili-blocker-workspace",
   "private": true,
-  "description": "manifest.json description",
   "type": "module",
   "scripts": {
-    "build": "pnpm run build:chrome && pnpm run build:firefox",
-    "build:chrome": "wxt build -b chrome",
-    "build:firefox": "wxt build -b firefox",
-    "compile": "tsc --noEmit",
-    "dev": "wxt",
-    "dev:firefox": "wxt -b firefox",
-    "format": "oxfmt --write . && tsx scripts/sort-rules.ts",
+    "build": "pnpm --filter bilibili-blocker run build",
+    "build:chrome": "pnpm --filter bilibili-blocker run build:chrome",
+    "build:firefox": "pnpm --filter bilibili-blocker run build:firefox",
+    "compile": "pnpm --filter bilibili-blocker run compile",
+    "dev": "pnpm --filter bilibili-blocker run dev",
+    "dev:firefox": "pnpm --filter bilibili-blocker run dev:firefox",
+    "format": "oxfmt --write . && pnpm --filter bilibili-blocker exec tsx scripts/sort-rules.ts aislop.txt aivoice.txt catfish.txt clickbait.txt copycat.txt fakenews.txt finance.txt sales.txt spam.txt superstition.txt troll.txt",
     "format:check": "oxfmt --check .",
-    "icon": "tsx scripts/make-icons.ts",
-    "postinstall": "wxt prepare",
+    "icon": "pnpm --filter bilibili-blocker run icon",
     "prepare": "husky",
-    "prezip": "pnpm run build",
-    "test": "vitest run",
-    "test:ui": "vitest --ui",
-    "test:watch": "vitest",
-    "zip": "pnpm run zip:chrome && pnpm run zip:firefox",
-    "zip:chrome": "wxt zip -b chrome",
-    "zip:firefox": "wxt zip -b firefox"
-  },
-  "dependencies": {
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "test": "pnpm --filter bilibili-blocker run test",
+    "test:ui": "pnpm --filter bilibili-blocker run test:ui",
+    "test:watch": "pnpm --filter bilibili-blocker run test:watch",
+    "zip": "pnpm --filter bilibili-blocker run zip",
+    "zip:chrome": "pnpm --filter bilibili-blocker run zip:chrome",
+    "zip:firefox": "pnpm --filter bilibili-blocker run zip:firefox"
   },
   "devDependencies": {
     "@guoyunhe/oxfmt-config": "^1.1.0",
-    "@types/node": "^26.4.0",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitest/ui": "^4.1.11",
-    "@wxt-dev/module-react": "^1.1.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.4.1",
-    "oxfmt": "^0.65.0",
-    "sharp": "^0.35.4",
-    "tsx": "^4.23.12",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.11",
-    "web-ext": "^10.5.0",
-    "wxt": "^0.21.3"
+    "oxfmt": "^0.65.0"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,json,jsonc,css,scss,less,htm,html,md,mdx,yaml,yml}": "oxfmt --write",
-    "rules/*.txt": "tsx scripts/sort-rules.ts"
+    "ext/rules/*.txt": "pnpm --filter bilibili-blocker exec tsx scripts/sort-rules.ts"
   }
 }

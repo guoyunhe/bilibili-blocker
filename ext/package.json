@@ -1,0 +1,42 @@
+{
+  "name": "bilibili-blocker",
+  "displayName": "BiliBili Blocker",
+  "version": "0.6.0",
+  "private": true,
+  "description": "manifest.json description",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm run build:chrome && pnpm run build:firefox",
+    "build:chrome": "wxt build -b chrome",
+    "build:firefox": "wxt build -b firefox",
+    "compile": "tsc --noEmit",
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "icon": "tsx scripts/make-icons.ts",
+    "postinstall": "wxt prepare",
+    "prezip": "pnpm run build",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest",
+    "zip": "pnpm run zip:chrome && pnpm run zip:firefox",
+    "zip:chrome": "wxt zip -b chrome",
+    "zip:firefox": "wxt zip -b firefox"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/ui": "^4.1.11",
+    "@wxt-dev/module-react": "^1.1.5",
+    "sharp": "^0.35.4",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11",
+    "web-ext": "^10.5.0",
+    "wxt": "^0.21.3"
+  }
+}

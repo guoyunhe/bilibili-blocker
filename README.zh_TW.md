@@ -33,16 +33,20 @@
 
 ## 封鎖規則
 
-- [aislop](./rules/aislop.txt) - 低品質 AI 生成影片
-- [aivoice](./rules/aivoice.txt) - AI 配音內容
-- [clickbait](./rules/clickbait.txt) - 標題黨與誇張縮圖
-- [copycat](./rules/copycat.txt) - 未授權搬運與剪輯
-- [fakenews](./rules/fakenews.txt) - 假新聞與陰謀論
-- [finance](./rules/finance.txt) - 投資理財與詐騙風險
-- [sales](./rules/sales.txt) - 推銷帶貨（直播帶貨、業配、引流推銷商品或課程）
-- [spam](./rules/spam.txt) - 垃圾內容
-- [superstition](./rules/superstition.txt) - 迷信與宗教
-- [troll](./rules/troll.txt) - 對立與引戰內容
+- [aislop](./ext/rules/aislop.txt) - 低品質 AI 生成影片
+- [aivoice](./ext/rules/aivoice.txt) - AI 配音內容
+- [clickbait](./ext/rules/clickbait.txt) - 標題黨與誇張縮圖
+- [copycat](./ext/rules/copycat.txt) - 未授權搬運與剪輯
+- [fakenews](./ext/rules/fakenews.txt) - 假新聞與陰謀論
+- [finance](./ext/rules/finance.txt) - 投資理財與詐騙風險
+- [sales](./ext/rules/sales.txt) - 推銷帶貨（直播帶貨、業配、引流推銷商品或課程）
+- [spam](./ext/rules/spam.txt) - 垃圾內容
+- [superstition](./ext/rules/superstition.txt) - 迷信與宗教
+- [troll](./ext/rules/troll.txt) - 對立與引戰內容
+
+## 開發
+
+擴充功能程式碼位於 `ext/`，並使用 pnpm workspace 管理。在儲存庫根目錄執行 `pnpm install` 安裝相依套件，使用 `pnpm dev` 啟動開發模式，使用 `pnpm build` 建置 Chrome 和 Firefox 版本。
 
 ## 常見問題
 

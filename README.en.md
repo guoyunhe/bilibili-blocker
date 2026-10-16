@@ -33,16 +33,20 @@ Block low-quality or unwanted content by account UID, with subscribed rules and 
 
 ## Blocking Rules
 
-- [aislop](./rules/aislop.txt) - Low-quality AI-generated videos
-- [aivoice](./rules/aivoice.txt) - AI voice content
-- [clickbait](./rules/clickbait.txt) - Clickbait titles and thumbnails
-- [copycat](./rules/copycat.txt) - Unauthorized reposts and clips
-- [fakenews](./rules/fakenews.txt) - Fake news and conspiracy theories
-- [finance](./rules/finance.txt) - Financial advice and scam risks
-- [sales](./rules/sales.txt) - Sales pitches and product promotion
-- [spam](./rules/spam.txt) - Spam content
-- [superstition](./rules/superstition.txt) - Superstition and religion
-- [troll](./rules/troll.txt) - Provocative and antagonistic content
+- [aislop](./ext/rules/aislop.txt) - Low-quality AI-generated videos
+- [aivoice](./ext/rules/aivoice.txt) - AI voice content
+- [clickbait](./ext/rules/clickbait.txt) - Clickbait titles and thumbnails
+- [copycat](./ext/rules/copycat.txt) - Unauthorized reposts and clips
+- [fakenews](./ext/rules/fakenews.txt) - Fake news and conspiracy theories
+- [finance](./ext/rules/finance.txt) - Financial advice and scam risks
+- [sales](./ext/rules/sales.txt) - Sales pitches and product promotion
+- [spam](./ext/rules/spam.txt) - Spam content
+- [superstition](./ext/rules/superstition.txt) - Superstition and religion
+- [troll](./ext/rules/troll.txt) - Provocative and antagonistic content
+
+## Development
+
+The extension code lives in `ext/` and is managed with pnpm workspaces. Run `pnpm install` at the repository root to install dependencies, `pnpm dev` to start development mode, or `pnpm build` to build for Chrome and Firefox.
 
 ## FAQ
 

@@ -1,2 +1,8 @@
+packages:
+  - ext
+
+publicHoistPattern:
+  - '@wxt-dev/module-react'
+
 allowBuilds:
   esbuild: true
