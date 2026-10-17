@@ -13,6 +13,7 @@ Block low-quality or unwanted content by account UID, with subscribed rules and 
 
 - [Install for Chrome](https://chromewebstore.google.com/detail/bilibili-blocker/egfeldkfhdbjcmpjbipdaafnopgpglje)
 - [Install for Firefox](https://addons.mozilla.org/zh-CN/firefox/addon/bilibili-blocker/)
+- [Install for Edge](https://microsoftedge.microsoft.com/addons/detail/bilibili-blocker/opmgomhndfglgnbkbiijnknljnopfahc)
 - [Join the Telegram group](https://t.me/bilibili_blocker)
 
 ## Screenshots

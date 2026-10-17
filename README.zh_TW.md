@@ -13,6 +13,7 @@
 
 - [下載 Chrome 擴充功能](https://chromewebstore.google.com/detail/bilibili-blocker/egfeldkfhdbjcmpjbipdaafnopgpglje)
 - [下載 Firefox 擴充功能](https://addons.mozilla.org/zh-CN/firefox/addon/bilibili-blocker/)
+- [下載 Edge 擴充功能](https://microsoftedge.microsoft.com/addons/detail/bilibili-blocker/opmgomhndfglgnbkbiijnknljnopfahc)
 - [加入 Telegram 群組](https://t.me/bilibili_blocker)
 
 ## 螢幕截圖
