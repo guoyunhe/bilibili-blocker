@@ -1,67 +1,55 @@
 import { browser } from 'wxt/browser';
 
-const BLUR_STYLE_ID = 'bilibili-blocker-blur-style';
+const HIDE_STYLE_ID = 'bilibili-blocker-hide-style';
+const HIDDEN_CLASS = 'bilibili-blocker-hidden';
 
-function injectBlurStyle() {
-  if (document.getElementById(BLUR_STYLE_ID)) return;
+function injectHideStyle() {
+  if (document.getElementById(HIDE_STYLE_ID)) return;
   const style = document.createElement('style');
-  style.id = BLUR_STYLE_ID;
-  style.textContent = `
-    .bilibili-blocker-blurred {
-      filter: blur(20px) grayscale(1);
-      transition: filter 0.3s ease;
-      pointer-events: auto;
-    }
-    .bilibili-blocker-blurred:hover {
-      filter: blur(0) grayscale(0);
-    }
-  `;
-  document.head.appendChild(style);
+  style.id = HIDE_STYLE_ID;
+  style.textContent = `.${HIDDEN_CLASS} { display: none !important; }`;
+  (document.head ?? document.documentElement).appendChild(style);
 }
 
-function removeBlurStyle() {
-  const style = document.getElementById(BLUR_STYLE_ID);
-  if (style) style.remove();
+function hideElement(el: Element) {
+  el.classList.add(HIDDEN_CLASS);
 }
 
-function blurElement(el: Element) {
-  el.classList.add('bilibili-blocker-blurred');
-}
-
-async function processVideoCards(blockedIds: Set<string>) {
-  if (blockedIds.size === 0) {
-    document.querySelectorAll('.bilibili-blocker-blurred').forEach((el) => {
-      el.classList.remove('bilibili-blocker-blurred');
-    });
-    return;
-  }
-
-  // Find all links to user spaces
+function processVideoCards(blockedIds: Set<string>) {
   const links = document.querySelectorAll('a[href*="space.bilibili.com"]');
-  const blurredCards = new Set<Element>();
+  const hiddenCards = new Set<Element>();
 
   for (const link of links) {
     const href = link.getAttribute('href');
-    if (!href) {
-      console.log('No href found for link', link);
-      continue;
-    }
+    if (!href) continue;
+
     const match = href.match(/space\.bilibili\.com\/(\d+)/);
     if (!match || !match[1]) continue;
     const uid = match[1];
 
     if (blockedIds.has(uid)) {
-      const card = link.closest(
-        '.feed-card, .bili-feed-card, .video-page-card-small, .bili-video-card',
-      );
-
-      if (card && !card.classList.contains('bilibili-blocker-blurred')) {
-        console.log(`Blurring card for UID ${uid}`);
-        blurElement(card);
-        blurredCards.add(card);
+      let card: Element | null = null;
+      let current: Element | null = link;
+      while (current) {
+        if (
+          current.matches(
+            '.feed-card, .bili-feed-card, .video-page-card-small, .bili-video-card, .col_3.col_xs_1_5.col_md_2.col_xl_1_7.mb_x40',
+          )
+        ) {
+          card = current;
+        }
+        current = current.parentElement;
+      }
+      if (card) {
+        hideElement(card);
+        hiddenCards.add(card);
       }
     }
   }
+
+  document.querySelectorAll(`.${HIDDEN_CLASS}`).forEach((card) => {
+    if (!hiddenCards.has(card)) card.classList.remove(HIDDEN_CLASS);
+  });
 }
 
 export default defineContentScript({
@@ -78,7 +66,7 @@ export default defineContentScript({
     }
 
     const blockedIdSet = new Set(blockedIds);
-    injectBlurStyle();
+    injectHideStyle();
 
     // Process existing cards
     processVideoCards(blockedIdSet);
@@ -100,11 +88,9 @@ export default defineContentScript({
         blockedIdSet.clear();
         for (const id of newIds) blockedIdSet.add(id);
         if (blockedIdSet.size === 0) {
-          document.querySelectorAll('.bilibili-blocker-blurred').forEach((el) => {
-            el.classList.remove('bilibili-blocker-blurred');
-          });
+          processVideoCards(blockedIdSet);
         } else {
-          injectBlurStyle();
+          injectHideStyle();
           processVideoCards(blockedIdSet);
         }
       }
