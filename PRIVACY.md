@@ -10,33 +10,33 @@ We take your privacy seriously. This policy explains what data the extension han
 
 ## Data Collection
 
-**This extension does NOT collect, store, or transmit any personal data.**
+**This extension does not collect account credentials, browsing history, or analytics data.**
 
-- No user credentials, browsing history, or personal information is ever accessed.
 - No analytics, telemetry, or tracking mechanisms are included.
-- No cookies, local storage, or persistent storage is used.
-- No data is sent to the developer or any third-party analytics service.
+- Custom blocklists, whitelists, and cached rules are stored locally in your browser.
+- When you view a Bilibili profile, its public account UID is sent to the Bilibili Blocker service to retrieve its community flags.
 
 ## Network Requests
 
 The extension makes the following network requests solely to provide its functionality:
 
-| Endpoint                                           | Purpose                                                                   | Data Sent |
-| -------------------------------------------------- | ------------------------------------------------------------------------- | --------- |
-| `https://bilibili-blocker.netlify.app/rules/*.txt` | Fetches the latest blocking rules for clickbait and AI-generated content. | None      |
+| Endpoint                                                   | Purpose                                                                   | Data Sent                                   |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
+| `https://bilibili-blocker.guoyunhe.me/uploads/rules/*.txt` | Fetches the latest blocking rules for clickbait and AI-generated content. | None                                        |
+| `https://bilibili-blocker.guoyunhe.me/api/accounts/{uid}`  | Fetches community flags for the Bilibili account whose profile you view.  | The public Bilibili account UID in the URL. |
 
-These requests are made only when you visit `www.bilibili.com` and are necessary to apply the blocking rules. No user-identifiable data is included in any request.
+Rule requests are made when the extension loads or refreshes blocking rules. Account flag requests are made when you view a Bilibili profile. The account UID identifies the public profile being viewed; the extension does not send your Bilibili credentials or browsing history. The flagging page is opened only when you click its link.
 
 ## Permissions
 
 The extension requires the following permissions:
 
-- **Host permission (`https://bilibili-blocker.netlify.app/rules/*.txt`)**: Required to fetch the latest blocking rules for clickbait and AI-generated content.
+- **Host permission (`https://bilibili-blocker.guoyunhe.me/*`)**: Required to fetch blocking rules and account flags from the service.
 - **Access to `www.bilibili.com`**: Required to apply the blocking rules on the Bilibili website.
 
 ## Data Sharing
 
-No data is shared with any third party. The developer does not receive or have access to any user data.
+The public account UID is sent to the Bilibili Blocker service only to retrieve flags for the profile you are viewing. The extension does not send your Bilibili credentials or browsing history, and does not use third-party analytics.
 
 ## Contact
 

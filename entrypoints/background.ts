@@ -30,7 +30,7 @@ const RULE_SOURCES: RuleSource[] = (
 ).map((item) => ({
   name: item,
   displayName: browser.i18n.getMessage(item),
-  url: `https://bilibili-blocker.netlify.app/rules/${item}.txt`,
+  url: `https://bilibili-blocker.guoyunhe.me/uploads/rules/${item}.txt`,
   count: 0,
 }));
 

@@ -8,11 +8,7 @@ export default defineConfig({
     description: '__MSG_extensionDescription__',
     default_locale: 'en',
     permissions: ['storage'],
-    host_permissions: [
-      '*://*.bilibili.com/*',
-      'https://bilibili-blocker.netlify.app/*',
-      'https://bilibili-blocker.guoyunhe.me/*',
-    ],
+    host_permissions: ['*://*.bilibili.com/*', 'https://bilibili-blocker.guoyunhe.me/*'],
     web_accessible_resources: [
       {
         resources: ['icon/*.png'],
