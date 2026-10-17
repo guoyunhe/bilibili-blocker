@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.7.0 - 2026-10-17
+
 ### Added
 
 - Show server-provided account flags and scores on user profile pages, with a link to submit a flag on the server.
