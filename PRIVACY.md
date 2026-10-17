@@ -22,10 +22,11 @@ The extension makes the following network requests solely to provide its functio
 
 | Endpoint                                                   | Purpose                                                                   | Data Sent                                   |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
+| `https://bilibili-blocker.guoyunhe.me/api/flags`           | Fetches the available community flag definitions.                         | None                                        |
 | `https://bilibili-blocker.guoyunhe.me/uploads/rules/*.txt` | Fetches the latest blocking rules for clickbait and AI-generated content. | None                                        |
 | `https://bilibili-blocker.guoyunhe.me/api/accounts/{uid}`  | Fetches community flags for the Bilibili account whose profile you view.  | The public Bilibili account UID in the URL. |
 
-Rule requests are made when the extension loads or refreshes blocking rules. Account flag requests are made when you view a Bilibili profile. The account UID identifies the public profile being viewed; the extension does not send your Bilibili credentials or browsing history. The flagging page is opened only when you click its link.
+Flag definition requests are made when the extension loads or refreshes its rule list. Rule requests are made when the extension loads or refreshes blocking rules. Account flag requests are made when you view a Bilibili profile. The account UID identifies the public profile being viewed; the extension does not send your Bilibili credentials or browsing history. The flagging page is opened only when you click its link.
 
 ## Permissions
 
