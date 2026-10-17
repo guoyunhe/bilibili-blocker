@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.8.0 - 2026-10-18
+
+### Changed
+
+- Hide blocked creators' video cards instead of blurring them, including their outer feed cards.
+
+### Fixed
+
+- Treat missing account flags as empty data and keep fetch errors out of the profile page.
+
 ## 0.7.0 - 2026-10-17
 
 ### Added
