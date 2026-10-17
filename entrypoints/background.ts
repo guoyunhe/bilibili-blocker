@@ -5,6 +5,14 @@ interface CachedRules {
   timestamp: number;
 }
 
+interface AccountFlag {
+  code: string;
+  name: string;
+  description: string;
+  status: string | null;
+  score: number;
+}
+
 const RULE_SOURCES: RuleSource[] = (
   [
     'aislop',
@@ -68,6 +76,25 @@ async function fetchRules(url: string): Promise<string[]> {
     .filter((line) => line && !line.startsWith('#'));
 }
 
+async function fetchAccountFlags(uid: string): Promise<AccountFlag[]> {
+  if (!/^\d+$/.test(uid)) {
+    throw new Error(`Invalid account UID: ${uid}`);
+  }
+
+  const response = await fetch(`https://bilibili-blocker.guoyunhe.me/api/accounts/${uid}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch account flags for ${uid}: ${response.status}`);
+  }
+
+  const result = (await response.json()) as {
+    data?: { flags?: AccountFlag[] };
+  };
+  if (!Array.isArray(result.data?.flags)) {
+    throw new Error(`Invalid account flags response for ${uid}`);
+  }
+  return result.data.flags;
+}
+
 async function getCachedRules(source: RuleSource): Promise<CachedRules | null> {
   const key = `rules:${source.name}`;
   const result = await storage.getItem<CachedRules>(`local:${key}`);
@@ -126,6 +153,8 @@ export default defineBackground(() => {
     switch (message.type) {
       case 'GET_RULES':
         return getActiveRules();
+      case 'GET_ACCOUNT_FLAGS':
+        return fetchAccountFlags(String(message.uid ?? ''));
       case 'GET_CONFIG':
         return storage.getItem<Record<string, boolean>>('local:config');
       case 'SET_CONFIG':

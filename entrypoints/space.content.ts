@@ -2,6 +2,16 @@ import { browser } from 'wxt/browser';
 
 const USER_BUTTON_ID = 'bilibili-blocker-user-button';
 const BLOCKED_STATUS_ID = 'bilibili-blocker-blocked-status';
+const FLAGS_CONTAINER_ID = 'bilibili-blocker-account-flags';
+const FLAGGING_LINK_ID = 'bilibili-blocker-flagging-link';
+
+interface AccountFlag {
+  code: string;
+  name: string;
+  description: string;
+  status: string | null;
+  score: number;
+}
 
 function injectUserPageStyle() {
   if (document.getElementById('bilibili-blocker-user-style')) return;
@@ -38,6 +48,41 @@ function injectUserPageStyle() {
       width: 16px;
       height: 16px;
     }
+    #${FLAGS_CONTAINER_ID} {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    #${FLAGS_CONTAINER_ID} .bilibili-blocker-account-flag {
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 2px 6px;
+      background: #333;
+      color: #fff;
+      font-size: 12px;
+      line-height: 18px;
+      white-space: nowrap;
+    }
+    #${FLAGS_CONTAINER_ID} .bilibili-blocker-account-flag[data-approved='true'] {
+    }
+    #${FLAGS_CONTAINER_ID} .bilibili-blocker-account-flag[data-approved='false'] {
+      background: #fffa;
+      color: #333;
+    }
+    #${FLAGGING_LINK_ID} {
+      display: inline-block;
+      margin: 8px 6px;
+      border: 1px solid #fb7299;
+      border-radius: 4px;
+      padding: 2px 6px;
+      background: #fb7299;
+      color: #fff;
+      font-size: 12px;
+      line-height: 18px;
+      text-decoration: none;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -66,12 +111,64 @@ function waitForIdle(): Promise<void> {
   });
 }
 
+async function setupAccountFlags(uid: string, detailsTop: Element) {
+  let flagsContainer = document.getElementById(FLAGS_CONTAINER_ID);
+  if (!flagsContainer) {
+    flagsContainer = document.createElement('div');
+    flagsContainer.id = FLAGS_CONTAINER_ID;
+  }
+  if (flagsContainer.parentElement !== detailsTop) detailsTop.append(flagsContainer);
+
+  let flaggingLink = document.getElementById(FLAGGING_LINK_ID) as HTMLAnchorElement | null;
+  if (!flaggingLink) {
+    flaggingLink = document.createElement('a');
+    flaggingLink.id = FLAGGING_LINK_ID;
+    flaggingLink.textContent = '标记';
+    flaggingLink.target = '_blank';
+    flaggingLink.rel = 'noreferrer';
+  }
+  flaggingLink.href = `https://bilibili-blocker.guoyunhe.me/accounts/${uid}`;
+  if (flaggingLink.parentElement !== detailsTop) detailsTop.append(flaggingLink);
+
+  if (flagsContainer.dataset.uid === uid) return;
+  flagsContainer.dataset.uid = uid;
+  flagsContainer.hidden = false;
+  flagsContainer.textContent = '标记加载中…';
+
+  try {
+    const flags = (await browser.runtime.sendMessage({
+      type: 'GET_ACCOUNT_FLAGS',
+      uid,
+    })) as AccountFlag[];
+    if (flagsContainer.dataset.uid !== uid) return;
+    if (!Array.isArray(flags)) throw new Error('Invalid account flags response');
+
+    flagsContainer.replaceChildren();
+    for (const flag of flags.filter((item) => item.status === 'approved' || item.score > 0)) {
+      const flagElement = document.createElement('span');
+      flagElement.className = 'bilibili-blocker-account-flag';
+      flagElement.dataset.approved = String(flag.status === 'approved');
+      flagElement.title = flag.description;
+      flagElement.textContent = `${flag.name} (${flag.score})`;
+      flagsContainer.append(flagElement);
+    }
+    flagsContainer.hidden = flagsContainer.childElementCount === 0;
+  } catch (err) {
+    if (flagsContainer.dataset.uid !== uid) return;
+    console.error(`Failed to load account flags for ${uid}:`, err);
+    flagsContainer.textContent = '标记加载失败';
+    flagsContainer.hidden = false;
+  }
+}
+
 async function setupUserPageButton(blockedIds: Set<string>) {
   const uid = getProfileUid();
   if (!uid || !document.body) return;
 
   await waitForIdle();
   const operations = document.querySelector('.operations');
+  const detailsTop = document.querySelector('.upinfo-detail__top');
+  if (detailsTop) void setupAccountFlags(uid, detailsTop);
   if (!operations) return;
 
   let button = document.getElementById(USER_BUTTON_ID) as HTMLButtonElement | null;
