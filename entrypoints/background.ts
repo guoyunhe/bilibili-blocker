@@ -142,6 +142,7 @@ async function fetchAccountFlags(uid: string): Promise<AccountFlag[]> {
   }
 
   const response = await fetch(`https://bilibili-blocker.guoyunhe.me/api/accounts/${uid}`);
+  if (response.status === 404) return [];
   if (!response.ok) {
     throw new Error(`Failed to fetch account flags for ${uid}: ${response.status}`);
   }
