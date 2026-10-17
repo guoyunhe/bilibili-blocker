@@ -123,7 +123,7 @@ async function setupAccountFlags(uid: string, detailsTop: Element) {
   if (!flaggingLink) {
     flaggingLink = document.createElement('a');
     flaggingLink.id = FLAGGING_LINK_ID;
-    flaggingLink.textContent = '标记';
+    flaggingLink.textContent = '打标';
     flaggingLink.target = '_blank';
     flaggingLink.rel = 'noreferrer';
   }
