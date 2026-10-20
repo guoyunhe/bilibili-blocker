@@ -20,7 +20,7 @@ function RulesTab({ sources, config, refreshing, onToggle, onRefresh }: RulesTab
         {sources
           .toSorted((a, b) => a.displayName.localeCompare(b.displayName))
           .map((source) => {
-            const enabled = config[source.name] ?? true;
+            const enabled = config[source.name] ?? source.recommended;
             return (
               <li key={source.name} className='rule-item'>
                 <label className='rule-label'>

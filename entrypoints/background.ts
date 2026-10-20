@@ -9,6 +9,7 @@ interface FlagDefinition {
   code: string;
   name: string;
   description: string;
+  recommended: boolean;
 }
 
 interface CachedFlagDefinitions {
@@ -86,7 +87,8 @@ async function fetchFlagDefinitions(): Promise<FlagDefinition[]> {
         typeof flag.code !== 'string' ||
         !/^[a-z0-9_-]+$/i.test(flag.code) ||
         typeof flag.name !== 'string' ||
-        typeof flag.description !== 'string',
+        typeof flag.description !== 'string' ||
+        typeof flag.recommended !== 'boolean',
     )
   ) {
     throw new Error('Invalid flag definitions response');
@@ -100,6 +102,7 @@ function toRuleSources(flags: FlagDefinition[]): RuleSource[] {
     displayName: flag.name,
     url: `${SERVICE_URL}/uploads/rules/${flag.code}.txt`,
     count: 0,
+    recommended: flag.recommended ?? false,
   }));
 }
 
@@ -174,8 +177,7 @@ async function getActiveRules(): Promise<string[]> {
   const ruleSources = await getRuleSources();
 
   for (const source of ruleSources) {
-    // Check if source is enabled (default: true)
-    const enabled = config?.[source.name] ?? true;
+    const enabled = config?.[source.name] ?? source.recommended;
 
     let cached = await getCachedRules(source);
     const isExpired = !cached || Date.now() - cached.timestamp > CACHE_DURATION;

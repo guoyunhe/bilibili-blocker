@@ -3,6 +3,7 @@ export interface RuleSource {
   displayName: string;
   url: string;
   count: number;
+  recommended: boolean;
 }
 
 export interface UserEntry {
