@@ -11,6 +11,11 @@ interface RulesTabProps {
 function RulesTab({ sources, config, refreshing, onToggle, onRefresh }: RulesTabProps) {
   return (
     <>
+      <div className='rule-actions'>
+        <button className='refresh-btn' onClick={onRefresh} disabled={refreshing}>
+          {refreshing ? browser.i18n.getMessage('refreshing') : browser.i18n.getMessage('refresh')}
+        </button>
+      </div>
       <ul className='rule-list'>
         {sources
           .toSorted((a, b) => a.displayName.localeCompare(b.displayName))
@@ -32,11 +37,6 @@ function RulesTab({ sources, config, refreshing, onToggle, onRefresh }: RulesTab
             );
           })}
       </ul>
-      <footer className='app-footer'>
-        <button className='refresh-btn' onClick={onRefresh} disabled={refreshing}>
-          {refreshing ? browser.i18n.getMessage('refreshing') : browser.i18n.getMessage('refresh')}
-        </button>
-      </footer>
     </>
   );
 }
