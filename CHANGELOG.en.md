@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.9.0 - 2026-10-20
+
+### Added
+
+- Automatically hide video cards posted by deactivated accounts.
+
 ## 0.8.0 - 2026-10-18
 
 ### Changed

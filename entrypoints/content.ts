@@ -27,7 +27,7 @@ function processVideoCards(blockedIds: Set<string>) {
     if (!match || !match[1]) continue;
     const uid = match[1];
 
-    if (blockedIds.has(uid)) {
+    if (blockedIds.has(uid) || link.textContent?.includes('账号已注销')) {
       let card: Element | null = null;
       let current: Element | null = link;
       while (current) {
