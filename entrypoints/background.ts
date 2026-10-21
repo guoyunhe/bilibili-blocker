@@ -1,15 +1,13 @@
 import type { RuleSource, UserEntry, UserLists } from '../types';
+import {
+  FLAG_DEFINITIONS_API_URL,
+  parseFlagDefinitionsResponse,
+  type FlagDefinition,
+} from '../utils/flag-definitions';
 
 interface CachedRules {
   ids: string[];
   timestamp: number;
-}
-
-interface FlagDefinition {
-  code: string;
-  name: string;
-  description: string;
-  recommended: boolean;
 }
 
 interface CachedFlagDefinitions {
@@ -72,28 +70,13 @@ async function fetchRules(url: string): Promise<string[]> {
 }
 
 async function fetchFlagDefinitions(): Promise<FlagDefinition[]> {
-  const response = await fetch(`${SERVICE_URL}/api/flags`);
+  const response = await fetch(FLAG_DEFINITIONS_API_URL);
   if (!response.ok) {
     throw new Error(`Failed to fetch flag definitions: ${response.status}`);
   }
 
-  const definitions: unknown = await response.json();
-  if (
-    !Array.isArray(definitions) ||
-    definitions.some(
-      (flag) =>
-        flag === null ||
-        typeof flag !== 'object' ||
-        typeof flag.code !== 'string' ||
-        !/^[a-z0-9_-]+$/i.test(flag.code) ||
-        typeof flag.name !== 'string' ||
-        typeof flag.description !== 'string' ||
-        typeof flag.recommended !== 'boolean',
-    )
-  ) {
-    throw new Error('Invalid flag definitions response');
-  }
-  return definitions;
+  const result: unknown = await response.json();
+  return parseFlagDefinitionsResponse(result);
 }
 
 function toRuleSources(flags: FlagDefinition[]): RuleSource[] {
