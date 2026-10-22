@@ -33,7 +33,7 @@ function processVideoCards(blockedIds: Set<string>) {
       while (current) {
         if (
           current.matches(
-            '.feed-card, .bili-feed-card, .video-page-card-small, .bili-video-card, .col_3.col_xs_1_5.col_md_2.col_xl_1_7.mb_x40',
+            '.feed-card, .bili-feed-card, .video-page-card-small, .video-page-operator-card-small, .bili-video-card, .col_3.col_xs_1_5.col_md_2.col_xl_1_7.mb_x40',
           )
         ) {
           card = current;
