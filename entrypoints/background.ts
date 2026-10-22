@@ -28,7 +28,10 @@ const FLAG_DEFINITIONS_KEY = 'local:flag-definitions';
 const FLAG_DEFINITIONS_CACHE_DURATION = 24 * 60 * 60 * 1000;
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+const ACTIVE_RULES_KEY = 'local:active-rules';
 const USER_LISTS_KEY = 'local:user-lists';
+const IMPORTED_RULES_KEY_PREFIX = 'local:imported-rules:';
+const ADD_RULE_UIDS_MESSAGE_TYPE = 'ADD_RULE_UIDS';
 
 async function getUserLists(): Promise<UserLists> {
   const lists = await storage.getItem<UserLists>(USER_LISTS_KEY);
@@ -48,13 +51,14 @@ function normalizeEntry(entry: UserEntry): UserEntry | null {
   return { uid, username: String(entry.username).trim() || uid };
 }
 
-async function notifyRulesUpdated(): Promise<string[]> {
-  const ids = await getActiveRules();
+async function notifyRulesUpdated(ids?: string[]): Promise<string[]> {
+  const activeIds = ids ?? (await getActiveRules());
+  await storage.setItem(ACTIVE_RULES_KEY, activeIds);
   const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
   for (const tab of tabs) {
-    if (tab.id) void browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED', ids });
+    if (tab.id) void browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED', ids: activeIds });
   }
-  return ids;
+  return activeIds;
 }
 
 async function fetchRules(url: string): Promise<string[]> {
@@ -148,10 +152,63 @@ async function getCachedRules(source: RuleSource): Promise<CachedRules | null> {
   return result ?? null;
 }
 
+async function getImportedRuleUids(code: string): Promise<string[]> {
+  const ids = await storage.getItem<string[]>(`${IMPORTED_RULES_KEY_PREFIX}${code}`);
+  return Array.isArray(ids) ? ids.filter((uid) => /^\d+$/.test(uid)) : [];
+}
+
 async function setCachedRules(source: RuleSource, ids: string[]): Promise<void> {
   const key = `rules:${source.name}`;
-  const cached: CachedRules = { ids, timestamp: Date.now() };
+  const importedIds = await getImportedRuleUids(source.name);
+  const cached: CachedRules = {
+    ids: [...new Set([...ids, ...importedIds])],
+    timestamp: Date.now(),
+  };
   await storage.setItem(`local:${key}`, cached);
+}
+
+async function filterUserLists(ids: string[]): Promise<string[]> {
+  const lists = await getUserLists();
+  const whitelist = new Set(lists.whitelist.map((entry) => entry.uid));
+  const blockedIds = new Set(ids);
+  for (const entry of lists.blacklist) blockedIds.add(entry.uid);
+  for (const uid of whitelist) blockedIds.delete(uid);
+  return [...blockedIds];
+}
+
+async function getCachedActiveRules(importedCode: string): Promise<string[]> {
+  const cachedDefinitions = await storage.getItem<CachedFlagDefinitions>(FLAG_DEFINITIONS_KEY);
+  if (!cachedDefinitions) {
+    const config = await storage.getItem<Record<string, boolean>>('local:config');
+    const activeIds = await storage.getItem<string[]>(ACTIVE_RULES_KEY);
+    const importedIds =
+      config?.[importedCode] === false ? [] : await getImportedRuleUids(importedCode);
+    return filterUserLists([...(activeIds ?? []), ...importedIds]);
+  }
+
+  const sources = toRuleSources(cachedDefinitions.flags);
+  if (!sources.some((source) => source.name === importedCode)) {
+    sources.push({
+      name: importedCode,
+      displayName: importedCode,
+      url: '',
+      count: 0,
+      recommended: true,
+    });
+  }
+
+  const config = await storage.getItem<Record<string, boolean>>('local:config');
+  const allIds: string[] = [];
+  for (const source of sources) {
+    const enabled = config?.[source.name] ?? source.recommended;
+    if (!enabled) continue;
+
+    const cached = await getCachedRules(source);
+    if (cached) allIds.push(...cached.ids);
+    allIds.push(...(await getImportedRuleUids(source.name)));
+  }
+
+  return filterUserLists(allIds);
 }
 
 async function getActiveRules(): Promise<string[]> {
@@ -180,14 +237,14 @@ async function getActiveRules(): Promise<string[]> {
     if (cached && enabled) {
       allIds.push(...cached!.ids);
     }
+    if (enabled) {
+      allIds.push(...(await getImportedRuleUids(source.name)));
+    }
   }
 
-  const lists = await getUserLists();
-  const whitelist = new Set(lists.whitelist.map((entry) => entry.uid));
-  const blockedIds = new Set(allIds);
-  for (const entry of lists.blacklist) blockedIds.add(entry.uid);
-  for (const uid of whitelist) blockedIds.delete(uid);
-  return [...blockedIds];
+  const activeIds = await filterUserLists(allIds);
+  await storage.setItem(ACTIVE_RULES_KEY, activeIds);
+  return activeIds;
 }
 
 export default defineBackground(() => {
@@ -244,6 +301,40 @@ export default defineBackground(() => {
         })();
       case 'GET_RULE_SOURCES':
         return getRuleSources();
+      case ADD_RULE_UIDS_MESSAGE_TYPE:
+        return (async () => {
+          const code = String(message.code ?? '');
+          if (!/^[a-z0-9_-]{1,32}$/.test(code)) {
+            throw new Error('Invalid rule source code');
+          }
+
+          const incomingUids: unknown = message.uids;
+          const isUid = (uid: unknown): uid is string =>
+            typeof uid === 'string' && /^\d+$/.test(uid);
+          if (!Array.isArray(incomingUids) || !incomingUids.every(isUid)) {
+            throw new Error('Invalid imported UID list');
+          }
+
+          const uids = [...new Set(incomingUids)];
+          if (uids.length === 0) {
+            throw new Error('Imported UID list is empty');
+          }
+
+          const importedKey: `local:${string}` = `${IMPORTED_RULES_KEY_PREFIX}${code}`;
+          const importedIds = await getImportedRuleUids(code);
+          await storage.setItem(importedKey, [...new Set([...importedIds, ...uids])]);
+
+          const cachedKey: `local:${string}` = `local:rules:${code}`;
+          const cached = await storage.getItem<CachedRules>(cachedKey);
+          const cachedIds = Array.isArray(cached?.ids) ? cached.ids : [];
+          await storage.setItem<CachedRules>(cachedKey, {
+            ids: [...new Set([...cachedIds, ...uids])],
+            timestamp: Date.now(),
+          });
+
+          await notifyRulesUpdated(await getCachedActiveRules(code));
+          return { count: uids.length };
+        })();
       case 'REFRESH_RULES':
         return (async () => {
           const ruleSources = await getRuleSources(true);
