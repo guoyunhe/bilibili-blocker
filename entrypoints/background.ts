@@ -279,8 +279,6 @@ export default defineBackground(() => {
   // Handle messages from content script and popup
   browser.runtime.onMessage.addListener((message, _sender) => {
     switch (message.type) {
-      case 'GET_RULES':
-        return getActiveRules();
       case 'IS_BLOCKED':
         return isUidBlocked(String(message.uid ?? ''));
       case 'GET_ACCOUNT_FLAGS':
