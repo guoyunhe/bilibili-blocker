@@ -1,5 +1,5 @@
 import type { UserEntry, UserLists } from '../../types';
-import { fetchAccountFlags } from './account-flags';
+import { fetchAccountFlags } from '../../utils/server-api';
 import {
   addImportedRuleUids,
   getActiveRulesAfterImport,

@@ -1,9 +1,6 @@
 import type { RuleSource } from '../../types';
-import {
-  FLAG_DEFINITIONS_API_URL,
-  parseFlagDefinitionsResponse,
-  type FlagDefinition,
-} from '../../utils/flag-definitions';
+import { type FlagDefinition } from '../../utils/flag-definitions';
+import { fetchFlagDefinitions, SERVER_URL } from '../../utils/server-api';
 import { getUserLists } from './user-lists';
 
 interface CachedRules {
@@ -16,7 +13,6 @@ interface CachedFlagDefinitions {
   timestamp: number;
 }
 
-const SERVICE_URL = 'https://bilibili-blocker.guoyunhe.me';
 const FLAG_DEFINITIONS_KEY = 'local:flag-definitions';
 const FLAG_DEFINITIONS_CACHE_DURATION = 24 * 60 * 60 * 1000;
 const CACHE_DURATION = 24 * 60 * 60 * 1000;
@@ -35,21 +31,11 @@ async function fetchRules(url: string): Promise<string[]> {
     .filter((line) => line && !line.startsWith('#'));
 }
 
-async function fetchFlagDefinitions(): Promise<FlagDefinition[]> {
-  const response = await fetch(FLAG_DEFINITIONS_API_URL);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch flag definitions: ${response.status}`);
-  }
-
-  const result: unknown = await response.json();
-  return parseFlagDefinitionsResponse(result);
-}
-
 function toRuleSources(flags: FlagDefinition[]): RuleSource[] {
   return flags.map((flag) => ({
     name: flag.code,
     displayName: flag.name,
-    url: `${SERVICE_URL}/uploads/rules/${flag.code}.txt`,
+    url: `${SERVER_URL}/uploads/rules/${flag.code}.txt`,
     count: 0,
     recommended: flag.recommended ?? false,
   }));

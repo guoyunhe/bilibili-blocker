@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { FLAG_DEFINITIONS_API_URL, parseFlagDefinitionsResponse } from './flag-definitions';
+import { parseFlagDefinitionsResponse } from './flag-definitions';
+import { FLAG_DEFINITIONS_API_URL } from './server-api';
 
 const definitions = [
   {

@@ -5,8 +5,6 @@ export interface FlagDefinition {
   recommended: boolean;
 }
 
-export const FLAG_DEFINITIONS_API_URL = 'https://bilibili-blocker.guoyunhe.me/api/flags';
-
 function isFlagDefinition(value: unknown): value is FlagDefinition {
   if (value === null || typeof value !== 'object') return false;
 
