@@ -167,6 +167,20 @@ async function setCachedRules(source: RuleSource, ids: string[]): Promise<void> 
   await storage.setItem(`local:${key}`, cached);
 }
 
+async function getFreshCachedRules(source: RuleSource): Promise<CachedRules | null> {
+  let cached = await getCachedRules(source);
+  if (!cached || Date.now() - cached.timestamp > CACHE_DURATION) {
+    try {
+      const ids = await fetchRules(source.url);
+      await setCachedRules(source, ids);
+      cached = { ids, timestamp: Date.now() };
+    } catch (err) {
+      console.error(`Failed to fetch rules for ${source.name}:`, err);
+    }
+  }
+  return cached;
+}
+
 async function filterUserLists(ids: string[]): Promise<string[]> {
   const lists = await getUserLists();
   const whitelist = new Set(lists.whitelist.map((entry) => entry.uid));
@@ -218,24 +232,12 @@ async function getActiveRules(): Promise<string[]> {
 
   for (const source of ruleSources) {
     const enabled = config?.[source.name] ?? source.recommended;
-
-    let cached = await getCachedRules(source);
-    const isExpired = !cached || Date.now() - cached.timestamp > CACHE_DURATION;
-
-    if (isExpired) {
-      try {
-        const ids = await fetchRules(source.url);
-        await setCachedRules(source, ids);
-        cached = { ids, timestamp: Date.now() };
-      } catch (err) {
-        console.error(`Failed to fetch rules for ${source.name}:`, err);
-      }
-    }
+    const cached = await getFreshCachedRules(source);
 
     source.count = cached?.ids.length ?? 0;
 
     if (cached && enabled) {
-      allIds.push(...cached!.ids);
+      allIds.push(...cached.ids);
     }
     if (enabled) {
       allIds.push(...(await getImportedRuleUids(source.name)));
@@ -245,6 +247,26 @@ async function getActiveRules(): Promise<string[]> {
   const activeIds = await filterUserLists(allIds);
   await storage.setItem(ACTIVE_RULES_KEY, activeIds);
   return activeIds;
+}
+
+async function isUidBlocked(uid: string): Promise<boolean> {
+  if (!/^\d+$/.test(uid)) {
+    throw new Error(`Invalid account UID: ${uid}`);
+  }
+
+  const lists = await getUserLists();
+  if (lists.whitelist.some((entry) => entry.uid === uid)) return false;
+  if (lists.blacklist.some((entry) => entry.uid === uid)) return true;
+
+  const config = await storage.getItem<Record<string, boolean>>('local:config');
+  const ruleSources = await getRuleSources();
+  for (const source of ruleSources) {
+    if (!(config?.[source.name] ?? source.recommended)) continue;
+    const cached = await getFreshCachedRules(source);
+    if (cached?.ids.includes(uid)) return true;
+    if ((await getImportedRuleUids(source.name)).includes(uid)) return true;
+  }
+  return false;
 }
 
 export default defineBackground(() => {
@@ -259,6 +281,8 @@ export default defineBackground(() => {
     switch (message.type) {
       case 'GET_RULES':
         return getActiveRules();
+      case 'IS_BLOCKED':
+        return isUidBlocked(String(message.uid ?? ''));
       case 'GET_ACCOUNT_FLAGS':
         return fetchAccountFlags(String(message.uid ?? ''));
       case 'GET_CONFIG':

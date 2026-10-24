@@ -12,28 +12,37 @@ function getPublisherUid(): string | null {
 export default defineContentScript({
   matches: ['*://www.bilibili.com/video/*'],
   async main() {
-    let blockedIds: string[] = [];
-    try {
-      blockedIds = await browser.runtime.sendMessage({ type: 'GET_RULES' });
-    } catch (err) {
-      console.error('Failed to get rules:', err);
-    }
-
-    const blockedIdSet = new Set(blockedIds);
     let redirecting = false;
+    let checkedUid: string | null = null;
 
-    function checkPublisher() {
+    async function checkPublisher() {
       if (redirecting) return;
       const uid = getPublisherUid();
-      if (!uid || !blockedIdSet.has(uid)) return;
+      if (!uid) {
+        checkedUid = null;
+        return;
+      }
+      if (checkedUid === uid) return;
+      checkedUid = uid;
 
-      redirecting = true;
-      location.replace('https://www.bilibili.com/');
+      try {
+        const isBlocked = await browser.runtime.sendMessage({
+          type: 'IS_BLOCKED',
+          uid,
+        });
+        if (!isBlocked || getPublisherUid() !== uid || redirecting) return;
+
+        redirecting = true;
+        location.replace('https://www.bilibili.com/');
+      } catch (err) {
+        console.error(`Failed to check blocked status for ${uid}:`, err);
+        if (checkedUid === uid) checkedUid = null;
+      }
     }
 
-    checkPublisher();
+    void checkPublisher();
 
-    const observer = new MutationObserver(checkPublisher);
+    const observer = new MutationObserver(() => void checkPublisher());
     observer.observe(document.documentElement, {
       childList: true,
       subtree: true,
@@ -43,10 +52,8 @@ export default defineContentScript({
 
     browser.runtime.onMessage.addListener((message) => {
       if (message.type !== 'RULES_UPDATED') return;
-      const newIds = message.ids as string[];
-      blockedIdSet.clear();
-      for (const id of newIds) blockedIdSet.add(id);
-      checkPublisher();
+      checkedUid = null;
+      void checkPublisher();
     });
   },
 });
