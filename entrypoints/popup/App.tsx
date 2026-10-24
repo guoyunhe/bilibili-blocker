@@ -44,15 +44,37 @@ function App() {
 
   const handleUserEntry = useCallback(
     async (list: 'blacklist' | 'whitelist', entry: UserEntry, enabled: boolean) => {
-      const result = (await browser.runtime.sendMessage({
-        type: 'SET_USER_ENTRY',
-        list,
-        entry,
-        enabled,
-      })) as SetUserEntryResult;
-      setLists(result.lists);
+      const updateEntry = (current: UserLists, updatedLists: UserLists): UserLists => ({
+        blacklist: [
+          ...current.blacklist.filter((item) => item.uid !== entry.uid),
+          ...updatedLists.blacklist.filter((item) => item.uid === entry.uid),
+        ],
+        whitelist: [
+          ...current.whitelist.filter((item) => item.uid !== entry.uid),
+          ...updatedLists.whitelist.filter((item) => item.uid === entry.uid),
+        ],
+      });
+      const previousLists = lists;
+      const optimisticLists = updateEntry(lists, {
+        blacklist: enabled && list === 'blacklist' ? [entry] : [],
+        whitelist: enabled && list === 'whitelist' ? [entry] : [],
+      });
+      setLists(optimisticLists);
+
+      try {
+        const result = (await browser.runtime.sendMessage({
+          type: 'SET_USER_ENTRY',
+          list,
+          entry,
+          enabled,
+        })) as SetUserEntryResult;
+        setLists((current) => updateEntry(current, result.lists));
+      } catch (err) {
+        setLists((current) => updateEntry(current, previousLists));
+        console.error('Failed to update user list:', err);
+      }
     },
-    [],
+    [lists],
   );
 
   const handleToggle = useCallback(
