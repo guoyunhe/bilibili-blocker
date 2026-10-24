@@ -15,7 +15,7 @@ export async function setUserLists(lists: UserLists): Promise<void> {
 }
 
 export function normalizeEntry(entry: UserEntry): UserEntry | null {
-  const uid = String(entry.uid).trim();
+  const uid = entry.uid.trim();
   if (!/^\d+$/.test(uid)) return null;
   return { uid, username: String(entry.username).trim() || uid };
 }

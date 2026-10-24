@@ -16,9 +16,9 @@ export function registerMessageHandlers(): void {
   browser.runtime.onMessage.addListener((message, _sender) => {
     switch (message.type) {
       case 'IS_BLOCKED':
-        return isUidBlocked(String(message.uid ?? ''));
+        return isUidBlocked(message.uid ?? '');
       case 'GET_ACCOUNT_FLAGS':
-        return fetchAccountFlags(String(message.uid ?? ''));
+        return fetchAccountFlags(message.uid ?? '');
       case 'GET_CONFIG':
         return storage.getItem<Record<string, boolean>>('local:config');
       case 'SET_CONFIG':
