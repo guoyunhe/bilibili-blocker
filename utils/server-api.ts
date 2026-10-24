@@ -4,7 +4,7 @@ const SERVER_API_URL = 'https://bilibili-blocker.guoyunhe.me/api';
 export const SERVER_URL = 'https://bilibili-blocker.guoyunhe.me';
 export const FLAG_DEFINITIONS_API_URL = `${SERVER_API_URL}/flags`;
 
-export interface AccountFlag {
+export interface UserFlag {
   code: string;
   name: string;
   description: string;
@@ -22,7 +22,7 @@ export async function fetchFlagDefinitions(): Promise<FlagDefinition[]> {
   return parseFlagDefinitionsResponse(result);
 }
 
-export async function fetchAccountFlags(uid: string): Promise<AccountFlag[]> {
+export async function fetchUserFlags(uid: string): Promise<UserFlag[]> {
   if (!/^\d+$/.test(uid)) {
     throw new Error(`Invalid account UID: ${uid}`);
   }
@@ -30,14 +30,14 @@ export async function fetchAccountFlags(uid: string): Promise<AccountFlag[]> {
   const response = await fetch(`${SERVER_API_URL}/accounts/${uid}`);
   if (response.status === 404) return [];
   if (!response.ok) {
-    throw new Error(`Failed to fetch account flags for ${uid}: ${response.status}`);
+    throw new Error(`Failed to fetch user flags for ${uid}: ${response.status}`);
   }
 
   const result = (await response.json()) as {
-    data?: { flags?: AccountFlag[] };
+    data?: { flags?: UserFlag[] };
   };
   if (!Array.isArray(result.data?.flags)) {
-    throw new Error(`Invalid account flags response for ${uid}`);
+    throw new Error(`Invalid user flags response for ${uid}`);
   }
   return result.data.flags;
 }

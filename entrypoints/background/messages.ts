@@ -1,5 +1,5 @@
 import type { UserEntry, UserLists } from '../../types';
-import { fetchAccountFlags } from '../../utils/server-api';
+import { fetchUserFlags } from '../../utils/server-api';
 import {
   addImportedRuleUids,
   getActiveRulesAfterImport,
@@ -17,8 +17,8 @@ export function registerMessageHandlers(): void {
     switch (message.type) {
       case 'IS_BLOCKED':
         return isUidBlocked(message.uid ?? '');
-      case 'GET_ACCOUNT_FLAGS':
-        return fetchAccountFlags(message.uid ?? '');
+      case 'GET_USER_FLAGS':
+        return fetchUserFlags(message.uid ?? '');
       case 'GET_CONFIG':
         return storage.getItem<Record<string, boolean>>('local:config');
       case 'SET_CONFIG':

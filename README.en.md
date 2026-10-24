@@ -31,7 +31,7 @@ Block low-quality or unwanted content by account UID, with subscribed rules and 
 - **Subscribed community rules**: Enable the rule categories you need and refresh the rule lists with one click.
 - **Custom blacklist**: Block unwanted accounts directly from their profile pages, including accounts not covered by subscribed rules.
 - **Custom whitelist**: Allow accounts matched by subscribed rules; whitelist entries take priority over subscribed rules.
-- **Community flags**: View server-provided account flags and scores on profile pages, and follow the link to submit a flag.
+- **Community flags**: View server-provided user flags and scores on profile pages, and follow the link to submit a flag.
 - **Local management**: Blacklists and whitelists are stored only in the browser and do not modify Bilibili's official block list.
 - **Dynamic content support**: Automatically process content loaded after the initial page load.
 
