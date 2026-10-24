@@ -17,7 +17,8 @@ function hideElement(el: Element) {
 
 function processVideoCards(
   blockedUidCache: Map<string, boolean>,
-  requestBlockedStatus: (uid: string) => void,
+  requestBlockedStatus: (uid: string, refresh?: boolean) => void,
+  refreshStatuses = false,
 ) {
   const links = document.querySelectorAll('a[href*="space.bilibili.com"]');
   const hiddenCards = new Set<Element>();
@@ -46,7 +47,9 @@ function processVideoCards(
     if (!card) continue;
 
     visibleUids.add(uid);
-    if (!blockedUidCache.has(uid)) requestBlockedStatus(uid);
+    if (refreshStatuses || !blockedUidCache.has(uid)) {
+      requestBlockedStatus(uid, refreshStatuses);
+    }
 
     if (blockedUidCache.get(uid) || link.textContent?.includes('账号已注销')) {
       hideElement(card);
@@ -72,8 +75,8 @@ export default defineContentScript({
     let rulesVersion = 0;
     injectHideStyle();
 
-    function requestBlockedStatus(uid: string) {
-      if (blockedUidCache.has(uid) || pendingChecks.has(uid)) return;
+    function requestBlockedStatus(uid: string, refresh = false) {
+      if (pendingChecks.has(uid) || (blockedUidCache.has(uid) && !refresh)) return;
 
       const version = rulesVersion;
       const request = browser.runtime
@@ -112,10 +115,9 @@ export default defineContentScript({
     browser.runtime.onMessage.addListener((message) => {
       if (message.type === 'RULES_UPDATED') {
         rulesVersion += 1;
-        blockedUidCache.clear();
         pendingChecks.clear();
         injectHideStyle();
-        processVideoCards(blockedUidCache, requestBlockedStatus);
+        processVideoCards(blockedUidCache, requestBlockedStatus, true);
       }
     });
   },
