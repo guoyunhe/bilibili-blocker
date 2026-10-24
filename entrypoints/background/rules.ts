@@ -207,6 +207,33 @@ export async function notifyRulesUpdated(ids?: string[]): Promise<string[]> {
   return activeIds;
 }
 
+export async function notifyUserEntryUpdated(
+  uid: string,
+  isBlocked: boolean,
+  blacklisted: boolean,
+  whitelisted: boolean,
+): Promise<void> {
+  const activeIds = await storage.getItem<string[]>(ACTIVE_RULES_KEY);
+  if (activeIds) {
+    const nextIds = activeIds.filter((id) => id !== uid);
+    if (isBlocked) nextIds.push(uid);
+    await storage.setItem(ACTIVE_RULES_KEY, nextIds);
+  }
+
+  const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
+  for (const tab of tabs) {
+    if (tab.id) {
+      void browser.tabs.sendMessage(tab.id, {
+        type: 'USER_ENTRY_UPDATED',
+        uid,
+        isBlocked,
+        blacklisted,
+        whitelisted,
+      });
+    }
+  }
+}
+
 export async function addImportedRuleUids(code: string, uids: string[]): Promise<void> {
   const importedKey: `local:${string}` = `${IMPORTED_RULES_KEY_PREFIX}${code}`;
   const importedIds = await getImportedRuleUids(code);

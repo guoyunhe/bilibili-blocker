@@ -6,6 +6,7 @@ import {
   getRuleSources,
   isUidBlocked,
   notifyRulesUpdated,
+  notifyUserEntryUpdated,
   refreshRules,
 } from './rules';
 import { getUserLists, normalizeEntry, setUserLists } from './user-lists';
@@ -30,7 +31,9 @@ export function registerMessageHandlers(): void {
           const lists = await getUserLists();
           const list = message.list as keyof UserLists;
           const entry = normalizeEntry(message.entry as UserEntry);
-          if (!entry || !['blacklist', 'whitelist'].includes(list)) return lists;
+          if (!entry || !['blacklist', 'whitelist'].includes(list)) {
+            throw new Error('Invalid user entry update');
+          }
           const entries = lists[list].filter((item) => item.uid !== entry.uid);
           if (message.enabled) entries.push(entry);
           const otherList = list === 'blacklist' ? 'whitelist' : 'blacklist';
@@ -40,8 +43,11 @@ export function registerMessageHandlers(): void {
             [otherList]: lists[otherList].filter((item) => item.uid !== entry.uid),
           };
           await setUserLists(nextLists);
-          await notifyRulesUpdated();
-          return nextLists;
+          const isBlocked = await isUidBlocked(entry.uid);
+          const blacklisted = nextLists.blacklist.some((item) => item.uid === entry.uid);
+          const whitelisted = nextLists.whitelist.some((item) => item.uid === entry.uid);
+          await notifyUserEntryUpdated(entry.uid, isBlocked, blacklisted, whitelisted);
+          return { lists: nextLists, isBlocked };
         })();
       case 'SET_USER_LISTS':
         return (async () => {

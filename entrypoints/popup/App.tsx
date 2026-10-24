@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { RuleSource, UserEntry, UserLists } from '../../types';
+import type { RuleSource, SetUserEntryResult, UserEntry, UserLists } from '../../types';
 
 import './App.css';
 import BlacklistTab from './BlacklistTab';
@@ -44,13 +44,13 @@ function App() {
 
   const handleUserEntry = useCallback(
     async (list: 'blacklist' | 'whitelist', entry: UserEntry, enabled: boolean) => {
-      const nextLists = await browser.runtime.sendMessage({
+      const result = (await browser.runtime.sendMessage({
         type: 'SET_USER_ENTRY',
         list,
         entry,
         enabled,
-      });
-      setLists(nextLists as UserLists);
+      })) as SetUserEntryResult;
+      setLists(result.lists);
     },
     [],
   );

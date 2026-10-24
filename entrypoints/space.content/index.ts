@@ -1,6 +1,6 @@
 import { browser } from 'wxt/browser';
 
-import { setupUserPageButton, USER_BUTTON_ID } from './user-block-button';
+import { applyUserPageButtonState, setupUserPageButton, USER_BUTTON_ID } from './user-block-button';
 import { USER_FLAGS_CONTAINER_ID, setupUserFlags } from './user-flags';
 
 function getProfileUid(): string | null {
@@ -51,6 +51,23 @@ export default defineContentScript({
     observer.observe(document.body, { childList: true, subtree: true });
 
     browser.runtime.onMessage.addListener((message) => {
+      if (
+        message.type === 'USER_ENTRY_UPDATED' &&
+        typeof message.uid === 'string' &&
+        typeof message.isBlocked === 'boolean' &&
+        typeof message.blacklisted === 'boolean' &&
+        typeof message.whitelisted === 'boolean'
+      ) {
+        applyUserPageButtonState(
+          message.uid,
+          {
+            blacklist: message.blacklisted ? [{ uid: message.uid, username: '' }] : [],
+            whitelist: message.whitelisted ? [{ uid: message.uid, username: '' }] : [],
+          },
+          message.isBlocked,
+        );
+        return;
+      }
       if (message.type !== 'RULES_UPDATED') return;
       setupUserPageButton();
     });

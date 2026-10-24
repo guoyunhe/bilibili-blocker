@@ -15,3 +15,8 @@ export interface UserLists {
   blacklist: UserEntry[];
   whitelist: UserEntry[];
 }
+
+export interface SetUserEntryResult {
+  lists: UserLists;
+  isBlocked: boolean;
+}
