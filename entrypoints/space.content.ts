@@ -161,11 +161,12 @@ async function setupAccountFlags(uid: string, detailsTop: Element) {
   }
 }
 
-async function setupUserPageButton(blockedIds: Set<string>) {
+async function setupUserPageButton() {
   const uid = getProfileUid();
   if (!uid || !document.body) return;
 
   await waitForIdle();
+  if (getProfileUid() !== uid) return;
   const operations = document.querySelector('.operations');
   const detailsTop = document.querySelector('.upinfo-detail__top');
   if (detailsTop) void setupAccountFlags(uid, detailsTop);
@@ -177,6 +178,8 @@ async function setupUserPageButton(blockedIds: Set<string>) {
     button.id = USER_BUTTON_ID;
     button.type = 'button';
     button.addEventListener('click', async () => {
+      const targetUid = button?.dataset.uid;
+      if (!targetUid || targetUid !== getProfileUid()) return;
       const isBlocked = button?.dataset.blocked === 'true';
       const isBlacklisted = button?.dataset.blacklisted === 'true';
       const isWhitelisted = button?.dataset.whitelisted === 'true';
@@ -192,15 +195,14 @@ async function setupUserPageButton(blockedIds: Set<string>) {
         type: 'SET_USER_ENTRY',
         list,
         enabled,
-        entry: { uid, username: getProfileUsername() },
+        entry: { uid: targetUid, username: getProfileUsername() },
       });
-      const newIds = (await browser.runtime.sendMessage({ type: 'GET_RULES' })) as string[];
-      blockedIds.clear();
-      for (const id of newIds) blockedIds.add(id);
-      await setupUserPageButton(blockedIds);
+      await setupUserPageButton();
     });
   }
   if (button.parentElement !== operations) operations.prepend(button);
+  button.dataset.uid = uid;
+  button.disabled = true;
 
   let blockedStatus = document.getElementById(BLOCKED_STATUS_ID);
   if (!blockedStatus) {
@@ -213,45 +215,50 @@ async function setupUserPageButton(blockedIds: Set<string>) {
   }
   if (blockedStatus.parentElement !== operations) operations.insertBefore(blockedStatus, button);
 
-  const lists = await browser.runtime.sendMessage({ type: 'GET_USER_LISTS' });
-  const blacklisted = lists.blacklist.some((entry: { uid: string }) => entry.uid === uid);
-  const whitelisted = lists.whitelist.some((entry: { uid: string }) => entry.uid === uid);
-  const isBlocked = blockedIds.has(uid) && !whitelisted;
-  button.dataset.blocked = String(isBlocked);
-  button.dataset.blacklisted = String(blacklisted);
-  button.dataset.whitelisted = String(whitelisted);
-  button.dataset.uid = uid;
-  button.textContent = browser.i18n.getMessage(isBlocked ? 'unblock' : 'block');
-  button.className = isBlocked ? 'bilibili-blocker-unblock' : 'bilibili-blocker-block';
-  blockedStatus.hidden = !isBlocked;
+  try {
+    const [lists, isBlocked] = await Promise.all([
+      browser.runtime.sendMessage({ type: 'GET_USER_LISTS' }),
+      browser.runtime.sendMessage({ type: 'IS_BLOCKED', uid }),
+    ]);
+    if (getProfileUid() !== uid || button.dataset.uid !== uid) return;
+    if (typeof isBlocked !== 'boolean') {
+      throw new Error(`Invalid blocked status response for ${uid}`);
+    }
+
+    const blacklisted = lists.blacklist.some((entry: { uid: string }) => entry.uid === uid);
+    const whitelisted = lists.whitelist.some((entry: { uid: string }) => entry.uid === uid);
+    button.dataset.blocked = String(isBlocked);
+    button.dataset.blacklisted = String(blacklisted);
+    button.dataset.whitelisted = String(whitelisted);
+    button.textContent = browser.i18n.getMessage(isBlocked ? 'unblock' : 'block');
+    button.className = isBlocked ? 'bilibili-blocker-unblock' : 'bilibili-blocker-block';
+    button.disabled = false;
+    blockedStatus.hidden = !isBlocked;
+  } catch (err) {
+    console.error(`Failed to load blocked status for ${uid}:`, err);
+    if (button.dataset.uid === uid) {
+      button.dataset.uid = '';
+      button.disabled = false;
+    }
+  }
 }
 
 export default defineContentScript({
   matches: ['*://space.bilibili.com/*'],
   async main() {
-    let blockedIds: string[] = [];
-    try {
-      blockedIds = await browser.runtime.sendMessage({ type: 'GET_RULES' });
-    } catch (err) {
-      console.error('Failed to get rules:', err);
-    }
-
-    const blockedIdSet = new Set(blockedIds);
     injectUserPageStyle();
-    setupUserPageButton(blockedIdSet);
+    setupUserPageButton();
 
     const observer = new MutationObserver(() => {
       const uid = getProfileUid();
       const button = document.getElementById(USER_BUTTON_ID);
-      if (uid && (!button || button.dataset.uid !== uid)) setupUserPageButton(blockedIdSet);
+      if (uid && (!button || button.dataset.uid !== uid)) setupUserPageButton();
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
     browser.runtime.onMessage.addListener((message) => {
       if (message.type !== 'RULES_UPDATED') return;
-      blockedIdSet.clear();
-      for (const id of message.ids as string[]) blockedIdSet.add(id);
-      setupUserPageButton(blockedIdSet);
+      setupUserPageButton();
     });
   },
 });

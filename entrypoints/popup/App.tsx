@@ -76,12 +76,10 @@ function App() {
         return;
       }
 
-      const rules = await browser.runtime.sendMessage({ type: 'GET_RULES' });
       for (const tab of tabs) {
         if (tab.id) {
           browser.tabs.sendMessage(tab.id, {
             type: 'RULES_UPDATED',
-            ids: rules,
           });
         }
       }
@@ -96,12 +94,10 @@ function App() {
       setSources(refreshedSources);
       // Notify all tabs to refresh rules
       const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
-      const rules = await browser.runtime.sendMessage({ type: 'GET_RULES' });
       for (const tab of tabs) {
         if (tab.id) {
           browser.tabs.sendMessage(tab.id, {
             type: 'RULES_UPDATED',
-            ids: rules,
           });
         }
       }

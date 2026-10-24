@@ -56,7 +56,7 @@ async function notifyRulesUpdated(ids?: string[]): Promise<string[]> {
   await storage.setItem(ACTIVE_RULES_KEY, activeIds);
   const tabs = await browser.tabs.query({ url: '*://*.bilibili.com/*' });
   for (const tab of tabs) {
-    if (tab.id) void browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED', ids: activeIds });
+    if (tab.id) void browser.tabs.sendMessage(tab.id, { type: 'RULES_UPDATED' });
   }
   return activeIds;
 }
