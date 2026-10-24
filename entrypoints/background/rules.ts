@@ -1,4 +1,4 @@
-import type { RuleSource } from '../../types';
+import type { RuleSource, UserLists } from '../../types';
 import { type FlagDefinition } from '../../utils/flag-definitions';
 import { fetchFlagDefinitions, SERVER_URL } from '../../utils/server-api';
 import { getUserLists } from './user-lists';
@@ -153,7 +153,7 @@ async function getCachedActiveRules(importedCode: string): Promise<string[]> {
   return filterUserLists(allIds);
 }
 
-export async function getActiveRules(): Promise<string[]> {
+async function getActiveRuleSet(lists?: UserLists): Promise<Set<string>> {
   const config = await storage.getItem<Record<string, boolean>>('local:config');
   const ruleSources = await getRuleSources();
 
@@ -164,14 +164,30 @@ export async function getActiveRules(): Promise<string[]> {
 
       source.count = cached?.ids.length ?? 0;
 
-      if (!enabled) return [];
-      return [...(cached?.ids ?? []), ...(await getImportedRuleUids(source.name))];
+      const ids = new Set(enabled ? (cached?.ids ?? []) : []);
+      if (enabled) {
+        for (const uid of await getImportedRuleUids(source.name)) ids.add(uid);
+      }
+      return ids;
     }),
   );
 
-  const activeIds = await filterUserLists(sourceIds.flat());
-  await storage.setItem(ACTIVE_RULES_KEY, activeIds);
+  const activeIds = new Set<string>();
+  for (const ids of sourceIds) {
+    for (const uid of ids) activeIds.add(uid);
+  }
+
+  const userLists = lists ?? (await getUserLists());
+  const whitelist = new Set(userLists.whitelist.map((entry) => entry.uid));
+  for (const entry of userLists.blacklist) activeIds.add(entry.uid);
+  for (const uid of whitelist) activeIds.delete(uid);
+
+  await storage.setItem(ACTIVE_RULES_KEY, [...activeIds]);
   return activeIds;
+}
+
+export async function getActiveRules(): Promise<string[]> {
+  return [...(await getActiveRuleSet())];
 }
 
 export async function isUidBlocked(uid: string): Promise<boolean> {
@@ -180,22 +196,16 @@ export async function isUidBlocked(uid: string): Promise<boolean> {
   }
 
   const lists = await getUserLists();
-  if (lists.whitelist.some((entry) => entry.uid === uid)) return false;
-  if (lists.blacklist.some((entry) => entry.uid === uid)) return true;
+  const whitelist = new Set(lists.whitelist.map((entry) => entry.uid));
+  if (whitelist.has(uid)) return false;
+  const blacklist = new Set(lists.blacklist.map((entry) => entry.uid));
+  if (blacklist.has(uid)) return true;
 
-  const config = await storage.getItem<Record<string, boolean>>('local:config');
-  const ruleSources = await getRuleSources();
-  for (const source of ruleSources) {
-    if (!(config?.[source.name] ?? source.recommended)) continue;
-    const cached = await getFreshCachedRules(source);
-    if (cached?.ids.includes(uid)) return true;
-    if ((await getImportedRuleUids(source.name)).includes(uid)) return true;
-  }
-  return false;
+  return (await getActiveRuleSet(lists)).has(uid);
 }
 
 export async function getBlockedStatuses(uids: string[]): Promise<Record<string, boolean>> {
-  const activeIds = new Set(await getActiveRules());
+  const activeIds = await getActiveRuleSet();
   return Object.fromEntries([...new Set(uids)].map((uid) => [uid, activeIds.has(uid)]));
 }
 
