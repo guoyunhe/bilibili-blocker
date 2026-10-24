@@ -155,24 +155,21 @@ async function getCachedActiveRules(importedCode: string): Promise<string[]> {
 
 export async function getActiveRules(): Promise<string[]> {
   const config = await storage.getItem<Record<string, boolean>>('local:config');
-  const allIds: string[] = [];
   const ruleSources = await getRuleSources();
 
-  for (const source of ruleSources) {
-    const enabled = config?.[source.name] ?? source.recommended;
-    const cached = await getFreshCachedRules(source);
+  const sourceIds = await Promise.all(
+    ruleSources.map(async (source) => {
+      const enabled = config?.[source.name] ?? source.recommended;
+      const cached = await getFreshCachedRules(source);
 
-    source.count = cached?.ids.length ?? 0;
+      source.count = cached?.ids.length ?? 0;
 
-    if (cached && enabled) {
-      allIds.push(...cached.ids);
-    }
-    if (enabled) {
-      allIds.push(...(await getImportedRuleUids(source.name)));
-    }
-  }
+      if (!enabled) return [];
+      return [...(cached?.ids ?? []), ...(await getImportedRuleUids(source.name))];
+    }),
+  );
 
-  const activeIds = await filterUserLists(allIds);
+  const activeIds = await filterUserLists(sourceIds.flat());
   await storage.setItem(ACTIVE_RULES_KEY, activeIds);
   return activeIds;
 }
@@ -195,6 +192,11 @@ export async function isUidBlocked(uid: string): Promise<boolean> {
     if ((await getImportedRuleUids(source.name)).includes(uid)) return true;
   }
   return false;
+}
+
+export async function getBlockedStatuses(uids: string[]): Promise<Record<string, boolean>> {
+  const activeIds = new Set(await getActiveRules());
+  return Object.fromEntries([...new Set(uids)].map((uid) => [uid, activeIds.has(uid)]));
 }
 
 export async function notifyRulesUpdated(ids?: string[]): Promise<string[]> {

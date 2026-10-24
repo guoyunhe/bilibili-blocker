@@ -2,6 +2,7 @@ import type { UserEntry, UserLists } from '../../types';
 import { fetchUserFlags } from '../../utils/server-api';
 import {
   addImportedRuleUids,
+  getBlockedStatuses,
   getActiveRulesAfterImport,
   getRuleSources,
   isUidBlocked,
@@ -15,9 +16,20 @@ const ADD_RULE_UIDS_MESSAGE_TYPE = 'ADD_RULE_UIDS';
 
 export function registerMessageHandlers(): void {
   browser.runtime.onMessage.addListener((message, _sender) => {
+    console.log('Received message:', message);
     switch (message.type) {
       case 'IS_BLOCKED':
         return isUidBlocked(message.uid ?? '');
+      case 'GET_BLOCKED_STATUSES': {
+        const uids: unknown = message.uids;
+        if (
+          !Array.isArray(uids) ||
+          !uids.every((uid) => typeof uid === 'string' && /^\d+$/.test(uid))
+        ) {
+          throw new Error('Invalid UID list for blocked status lookup');
+        }
+        return getBlockedStatuses(uids);
+      }
       case 'GET_USER_FLAGS':
         return fetchUserFlags(message.uid ?? '');
       case 'GET_CONFIG':

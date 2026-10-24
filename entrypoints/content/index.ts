@@ -30,20 +30,26 @@ function getVideoCard(link: Element): Element | null {
   return card;
 }
 
+function isBlockedStatusMap(value: unknown): value is Record<string, boolean> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((status) => typeof status === 'boolean')
+  );
+}
+
 function processVideoCard(
   card: Element,
   blockedUidCache: Map<string, boolean>,
-  requestBlockedStatus: (uid: string, refresh?: boolean) => void,
-  refreshStatuses = false,
+  requestBlockedStatus: (uid: string) => void,
 ) {
   let shouldHide = false;
   for (const link of card.querySelectorAll('a[href*="space.bilibili.com"]')) {
     const uid = getUidFromLink(link);
     if (!uid) continue;
 
-    if (refreshStatuses || !blockedUidCache.has(uid)) {
-      requestBlockedStatus(uid, refreshStatuses);
-    }
+    if (!blockedUidCache.has(uid)) requestBlockedStatus(uid);
     if (blockedUidCache.get(uid) || link.textContent?.includes('账号已注销')) {
       shouldHide = true;
     }
@@ -54,8 +60,9 @@ function processVideoCard(
 function processUidCards(
   uid: string,
   blockedUidCache: Map<string, boolean>,
-  requestBlockedStatus: (uid: string, refresh?: boolean) => void,
+  requestBlockedStatus: (uid: string) => void,
 ) {
+  const start = Date.now();
   const cards = new Set<Element>();
   for (const link of document.querySelectorAll(`a[href*="space.bilibili.com/${uid}"]`)) {
     if (getUidFromLink(link) !== uid) continue;
@@ -66,13 +73,14 @@ function processUidCards(
   for (const card of cards) {
     processVideoCard(card, blockedUidCache, requestBlockedStatus);
   }
+  console.log(`Processed UID cards for ${uid} in ${Date.now() - start}ms`);
 }
 
 function processVideoCards(
   blockedUidCache: Map<string, boolean>,
-  requestBlockedStatus: (uid: string, refresh?: boolean) => void,
-  refreshStatuses = false,
+  requestBlockedStatus: (uid: string) => void,
 ) {
+  const start = Date.now();
   const links = document.querySelectorAll('a[href*="space.bilibili.com"]');
   const hiddenCards = new Set<Element>();
   const visibleUids = new Set<string>();
@@ -89,7 +97,7 @@ function processVideoCards(
   }
 
   for (const card of cards) {
-    processVideoCard(card, blockedUidCache, requestBlockedStatus, refreshStatuses);
+    processVideoCard(card, blockedUidCache, requestBlockedStatus);
     if (card.classList.contains(HIDDEN_CLASS)) hiddenCards.add(card);
   }
 
@@ -100,6 +108,7 @@ function processVideoCards(
   document.querySelectorAll(`.${HIDDEN_CLASS}`).forEach((card) => {
     if (!hiddenCards.has(card)) card.classList.remove(HIDDEN_CLASS);
   });
+  console.log(`Processed video cards in ${Date.now() - start}ms`);
 }
 
 export default defineContentScript({
@@ -112,8 +121,8 @@ export default defineContentScript({
     const uidVersions = new Map<string, number>();
     injectHideStyle();
 
-    function requestBlockedStatus(uid: string, refresh = false) {
-      if (pendingChecks.has(uid) || (blockedUidCache.has(uid) && !refresh)) return;
+    function requestBlockedStatus(uid: string) {
+      if (pendingChecks.has(uid) || blockedUidCache.has(uid)) return;
 
       const version = rulesVersion;
       const uidVersion = uidVersions.get(uid) ?? 0;
@@ -137,7 +146,53 @@ export default defineContentScript({
       pendingChecks.set(uid, request);
     }
 
-    processVideoCards(blockedUidCache, requestBlockedStatus);
+    async function refreshVisibleBlockedStatuses() {
+      const version = rulesVersion;
+      const visibleUids = new Set<string>();
+      for (const link of document.querySelectorAll('a[href*="space.bilibili.com"]')) {
+        const uid = getUidFromLink(link);
+        if (uid && getVideoCard(link)) visibleUids.add(uid);
+      }
+      const uidVersionsAtRequest = new Map(
+        [...visibleUids].map((uid) => [uid, uidVersions.get(uid) ?? 0]),
+      );
+      if (visibleUids.size === 0) {
+        processVideoCards(blockedUidCache, requestBlockedStatus);
+        return;
+      }
+
+      try {
+        const statuses: unknown = await browser.runtime.sendMessage({
+          type: 'GET_BLOCKED_STATUSES',
+          uids: [...visibleUids],
+        });
+        if (!isBlockedStatusMap(statuses)) {
+          throw new Error('Invalid blocked status response');
+        }
+        if (version !== rulesVersion) return;
+
+        const validatedStatuses = new Map<string, boolean>();
+        for (const uid of visibleUids) {
+          const status = statuses[uid];
+          if (typeof status !== 'boolean') {
+            throw new Error(`Invalid blocked status response for ${uid}`);
+          }
+          validatedStatuses.set(uid, status);
+        }
+        for (const uid of visibleUids) {
+          const status = validatedStatuses.get(uid);
+          if (
+            status !== undefined &&
+            (uidVersions.get(uid) ?? 0) === uidVersionsAtRequest.get(uid)
+          ) {
+            blockedUidCache.set(uid, status);
+          }
+        }
+        processVideoCards(blockedUidCache, requestBlockedStatus);
+      } catch (err) {
+        console.error('Failed to refresh visible blocked statuses:', err);
+      }
+    }
 
     // Watch for dynamically added content
     const observer = new MutationObserver((records) => {
@@ -169,6 +224,7 @@ export default defineContentScript({
       childList: true,
       subtree: true,
     });
+    void refreshVisibleBlockedStatuses();
 
     // Listen for rule updates from background
     browser.runtime.onMessage.addListener((message) => {
@@ -190,7 +246,7 @@ export default defineContentScript({
         rulesVersion += 1;
         pendingChecks.clear();
         injectHideStyle();
-        processVideoCards(blockedUidCache, requestBlockedStatus, true);
+        void refreshVisibleBlockedStatuses();
       }
     });
   },
