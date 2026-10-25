@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased
+## 0.10.0 - 2026-10-25
+
+### Added
+
+- Added the ability to block video publishers, with blacklist and whitelist management in the popup.
+- Added user flags and scores to profile pages, and improved flag submission and blocked-status interactions.
+
+### Improved
+
+- Improved user-list loading, scrolling, and blocked-status updates.
 
 ## 0.9.0 - 2026-10-20
 
