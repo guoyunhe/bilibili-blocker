@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.1 - 2026-10-31
+
+### Fixed
+
+- Detect the publisher in collaborative videos where the uploader is listed as staff.
+
 ## 0.10.0 - 2026-10-25
 
 ### Added
