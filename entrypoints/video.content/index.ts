@@ -1,7 +1,9 @@
 import { browser } from 'wxt/browser';
 
 function getPublisherUid(): string | null {
-  const publisher = document.querySelector<HTMLAnchorElement>('.up-panel-container a.up-name');
+  const publisher = document.querySelector<HTMLAnchorElement>(
+    '.up-panel-container a.up-name, .up-panel-container a.staff-name',
+  );
   if (!publisher?.href) return null;
 
   const url = new URL(publisher.href);
