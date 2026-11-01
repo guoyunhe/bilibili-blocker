@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Added dark mode to the popup, automatically following the system theme.
+
 ## 0.10.1 - 2026-10-31
 
 ### Fixed
