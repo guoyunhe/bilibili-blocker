@@ -1,14 +1,14 @@
 import { browser } from 'wxt/browser';
 
+import { getUidFromUrl } from '../../utils/uid';
+
 function getPublisherUid(): string | null {
   const publisher = document.querySelector<HTMLAnchorElement>(
     '.up-panel-container a.up-name, .up-panel-container a.staff-name',
   );
   if (!publisher?.href) return null;
 
-  const url = new URL(publisher.href);
-  if (url.hostname !== 'space.bilibili.com') return null;
-  return url.pathname.match(/^\/(\d+)(?:\/|$)/)?.[1] ?? null;
+  return getUidFromUrl(publisher.href);
 }
 
 export default defineContentScript({

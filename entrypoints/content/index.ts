@@ -1,9 +1,11 @@
 import { browser } from 'wxt/browser';
 
+import { getUidFromUrl } from '../../utils/uid';
+
 const HIDE_STYLE_ID = 'bilibili-blocker-hide-style';
 const HIDDEN_CLASS = 'bilibili-blocker-hidden';
 const VIDEO_CARD_SELECTOR =
-  '.feed-card, .bili-feed-card, .video-page-card-small, .video-page-operator-card-small, .bili-video-card, .col_3.col_xs_1_5.col_md_2.col_xl_1_7.mb_x40';
+  '.feed-card, .bili-feed-card, .video-page-card-small, .video-page-operator-card-small, .bili-video-card, .video-list-item, .col_3.col_xs_1_5.col_md_2.col_xl_1_7.mb_x40';
 
 function injectHideStyle() {
   if (document.getElementById(HIDE_STYLE_ID)) return;
@@ -17,7 +19,7 @@ function getUidFromLink(link: Element): string | null {
   const href = link.getAttribute('href');
   if (!href) return null;
 
-  return href.match(/space\.bilibili\.com\/(\d+)/)?.[1] ?? null;
+  return getUidFromUrl(href, document.baseURI);
 }
 
 function getVideoCard(link: Element): Element | null {
@@ -64,7 +66,7 @@ function processUidCards(
 ) {
   const start = Date.now();
   const cards = new Set<Element>();
-  for (const link of document.querySelectorAll(`a[href*="space.bilibili.com/${uid}"]`)) {
+  for (const link of document.querySelectorAll('a[href*="space.bilibili.com"]')) {
     if (getUidFromLink(link) !== uid) continue;
     const card = getVideoCard(link);
     if (card) cards.add(card);

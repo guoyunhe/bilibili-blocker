@@ -1,6 +1,7 @@
 import { browser } from 'wxt/browser';
 
 import type { SetUserEntryResult, UserLists } from '../../types';
+import { getUidFromUrl } from '../../utils/uid';
 
 export const USER_BUTTON_ID = 'bilibili-blocker-user-button';
 const BLOCKED_STATUS_ID = 'bilibili-blocker-blocked-status';
@@ -45,8 +46,7 @@ function injectUserButtonStyle() {
 }
 
 function getProfileUid(): string | null {
-  const match = location.pathname.match(/^\/(\d+)(?:\/|$)/);
-  return match?.[1] ?? null;
+  return getUidFromUrl(location.href);
 }
 
 function getProfileUsername(): string {

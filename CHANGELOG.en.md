@@ -1,10 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.10.2 - 2026-11-04
 
 ### Added
 
 - Added dark mode to the popup, automatically following the system theme.
+
+### Fixed
+
+- Recognize UIDs from profile links with a language prefix.
 
 ## 0.10.1 - 2026-10-31
 

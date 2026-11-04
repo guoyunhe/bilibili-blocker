@@ -1,11 +1,11 @@
 import { browser } from 'wxt/browser';
 
+import { getUidFromUrl } from '../../utils/uid';
 import { applyUserPageButtonState, setupUserPageButton, USER_BUTTON_ID } from './user-block-button';
 import { USER_FLAGS_CONTAINER_ID, setupUserFlags } from './user-flags';
 
 function getProfileUid(): string | null {
-  const match = location.pathname.match(/^\/(\d+)(?:\/|$)/);
-  return match?.[1] ?? null;
+  return getUidFromUrl(location.href);
 }
 
 export default defineContentScript({
