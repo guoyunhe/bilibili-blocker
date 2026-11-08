@@ -3,6 +3,8 @@ import { browser } from 'wxt/browser';
 import type { SetUserEntryResult, UserLists } from '../../types';
 import { getUidFromUrl } from '../../utils/uid';
 
+import userButtonStyle from './user-block-button.css?raw';
+
 export const USER_BUTTON_ID = 'bilibili-blocker-user-button';
 const BLOCKED_STATUS_ID = 'bilibili-blocker-blocked-status';
 
@@ -10,38 +12,7 @@ function injectUserButtonStyle() {
   if (document.getElementById('bilibili-blocker-user-button-style')) return;
   const style = document.createElement('style');
   style.id = 'bilibili-blocker-user-button-style';
-  style.textContent = `
-    #${USER_BUTTON_ID} {
-      position: relative;
-      z-index: 2;
-      margin: 8px;
-      border: 0;
-      border-radius: 4px;
-      padding: 7px 14px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    #${USER_BUTTON_ID}.bilibili-blocker-block { background: #fb7299; }
-    #${USER_BUTTON_ID}.bilibili-blocker-unblock { background: #666; }
-    #${BLOCKED_STATUS_ID} {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      margin: 8px 0 8px 8px;
-      color: #fff;
-      text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-      font-size: 13px;
-      line-height: 16px;
-      vertical-align: middle;
-    }
-    #${BLOCKED_STATUS_ID}[hidden] { display: none; }
-    #${BLOCKED_STATUS_ID} img {
-      width: 16px;
-      height: 16px;
-    }
-  `;
+  style.textContent = userButtonStyle;
   document.head.appendChild(style);
 }
 

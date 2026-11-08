@@ -1,24 +1,32 @@
 import { browser } from 'wxt/browser';
 
+import homeStyle from './style.css?raw';
+
 const HOME_STYLE_ID = 'bilibili-blocker-home-style';
+const HOME_STYLE_CLASSES = [
+  'bilibili-blocker-hide-floor-card',
+  'bilibili-blocker-hide-live-card',
+  'bilibili-blocker-hide-recommended-swipe',
+];
 
 function updateHomeStyle(
   hideFloorCard: boolean,
   hideLiveCard: boolean,
   hideRecommendedSwipe: boolean,
 ) {
-  document.getElementById(HOME_STYLE_ID)?.remove();
-  if (!hideFloorCard && !hideLiveCard && !hideRecommendedSwipe) return;
+  const enabled = [hideFloorCard, hideLiveCard, hideRecommendedSwipe];
+  for (const [index, className] of HOME_STYLE_CLASSES.entries()) {
+    document.documentElement.classList.toggle(className, enabled[index]);
+  }
+  if (!enabled.some(Boolean)) {
+    document.getElementById(HOME_STYLE_ID)?.remove();
+    return;
+  }
+  if (document.getElementById(HOME_STYLE_ID)) return;
 
   const style = document.createElement('style');
   style.id = HOME_STYLE_ID;
-  style.textContent = [
-    hideFloorCard && '.floor-single-card { display: none !important; }',
-    hideLiveCard && '.bili-feed-card:has(.bili-live-card) { display: none !important; }',
-    hideRecommendedSwipe && '.recommended-swipe { display: none !important; }',
-  ]
-    .filter(Boolean)
-    .join('\n');
+  style.textContent = homeStyle;
   (document.head ?? document.documentElement).appendChild(style);
 }
 

@@ -2,6 +2,18 @@ import { browser } from 'wxt/browser';
 
 import { getUidFromUrl } from '../../utils/uid';
 
+import videoStyle from './style.css?raw';
+
+const VIDEO_STYLE_ID = 'bilibili-blocker-video-style';
+
+function injectVideoStyle() {
+  if (document.getElementById(VIDEO_STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = VIDEO_STYLE_ID;
+  style.textContent = videoStyle;
+  (document.head ?? document.documentElement).appendChild(style);
+}
+
 function getPublisherUid(): string | null {
   const publisher = document.querySelector<HTMLAnchorElement>(
     '.up-panel-container a.up-name, .up-panel-container a.staff-name',
@@ -14,6 +26,7 @@ function getPublisherUid(): string | null {
 export default defineContentScript({
   matches: ['*://www.bilibili.com/video/*'],
   async main() {
+    injectVideoStyle();
     let redirecting = false;
     let checkedUid: string | null = null;
 

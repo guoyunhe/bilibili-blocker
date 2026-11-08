@@ -4,6 +4,8 @@ import { formatRating } from '../../utils/rating';
 import { SERVER_URL, type UserAccountData } from '../../utils/server-api';
 import { getUidFromUrl } from '../../utils/uid';
 
+import contentStyle from './style.css?raw';
+
 const HIDE_STYLE_ID = 'bilibili-blocker-hide-style';
 const HIDDEN_CLASS = 'bilibili-blocker-hidden';
 const USER_FLAGS_CLASS = 'bilibili-blocker-video-user-flags';
@@ -18,38 +20,7 @@ function injectHideStyle() {
   if (!document.getElementById(HIDE_STYLE_ID)) {
     const style = document.createElement('style');
     style.id = HIDE_STYLE_ID;
-    style.textContent = `
-      .${HIDDEN_CLASS} { display: none !important; }
-      .${USER_ROW_CLASS} {
-        position: relative;
-      }
-      .${USER_FLAGS_CLASS} {
-        display: contents;
-      }
-      .${USER_FLAGS_ROW_CLASS} {
-        position: absolute;
-        bottom: -18px;
-        left: 0;
-        width: 100%;
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 4px;
-        overflow: hidden;
-      }
-      .${USER_FLAGS_ROW_CLASS} > .${USER_FLAG_CLASS} {
-        border-radius: 3px;
-        padding: 1px 4px;
-        background: #f1f2f3;
-        color: #61666d;
-        font-size: 11px;
-        line-height: 16px;
-        white-space: nowrap;
-      }
-      .${USER_FLAGS_CLASS} > .${USER_RATING_CLASS} {
-        margin-left: 6px;
-        font-size: 12px;
-      }
-    `;
+    style.textContent = contentStyle;
     (document.head ?? document.documentElement).appendChild(style);
   }
 }

@@ -1,0 +1,11 @@
+.bilibili-blocker-hide-floor-card .floor-single-card {
+  display: none !important;
+}
+
+.bilibili-blocker-hide-live-card .bili-feed-card:has(.bili-live-card) {
+  display: none !important;
+}
+
+.bilibili-blocker-hide-recommended-swipe .recommended-swipe {
+  display: none !important;
+}

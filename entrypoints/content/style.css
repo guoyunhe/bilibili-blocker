@@ -1,0 +1,45 @@
+.bilibili-blocker-hidden {
+  display: none !important;
+}
+
+.bilibili-blocker-video-user-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bilibili-blocker-video-user-row a:first-child {
+  flex: 1 1 100%;
+}
+
+.bilibili-blocker-video-user-flags {
+  display: contents;
+  flex: 1 1 0;
+  white-space: nowrap;
+}
+
+.bilibili-blocker-video-user-flags-row {
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.bilibili-blocker-video-user-flags-row > .bilibili-blocker-video-user-flag {
+  border-radius: 3px;
+  padding: 1px 4px;
+  background: #f1f2f3;
+  color: #61666d;
+  font-size: 11px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.bilibili-blocker-video-user-flags > .bilibili-blocker-video-user-rating {
+  margin-left: 6px;
+  font-size: 12px;
+}

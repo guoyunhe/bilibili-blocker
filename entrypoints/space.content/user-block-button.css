@@ -1,0 +1,41 @@
+#bilibili-blocker-user-button {
+  position: relative;
+  z-index: 2;
+  margin: 8px;
+  border: 0;
+  border-radius: 4px;
+  padding: 7px 14px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#bilibili-blocker-user-button.bilibili-blocker-block {
+  background: #fb7299;
+}
+
+#bilibili-blocker-user-button.bilibili-blocker-unblock {
+  background: #666;
+}
+
+#bilibili-blocker-blocked-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 8px 0 8px 8px;
+  color: #fff;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  line-height: 16px;
+  vertical-align: middle;
+}
+
+#bilibili-blocker-blocked-status[hidden] {
+  display: none;
+}
+
+#bilibili-blocker-blocked-status img {
+  width: 16px;
+  height: 16px;
+}

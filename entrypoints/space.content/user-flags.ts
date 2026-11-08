@@ -3,6 +3,8 @@ import { browser } from 'wxt/browser';
 import { formatRating } from '../../utils/rating';
 import type { UserAccountData } from '../../utils/server-api';
 
+import userFlagsStyle from './user-flags.css?raw';
+
 export const USER_FLAGS_CONTAINER_ID = 'bilibili-blocker-user-flags';
 const FLAGGING_LINK_ID = 'bilibili-blocker-flagging-link';
 
@@ -10,43 +12,7 @@ function injectUserFlagsStyle() {
   if (document.getElementById('bilibili-blocker-user-flags-style')) return;
   const style = document.createElement('style');
   style.id = 'bilibili-blocker-user-flags-style';
-  style.textContent = `
-    #${USER_FLAGS_CONTAINER_ID} {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    #${USER_FLAGS_CONTAINER_ID} .bilibili-blocker-user-flag {
-      border: 1px solid #333;
-      border-radius: 4px;
-      padding: 2px 6px;
-      background: #333;
-      color: #fff;
-      font-size: 12px;
-      line-height: 18px;
-      white-space: nowrap;
-    }
-    #${USER_FLAGS_CONTAINER_ID} .bilibili-blocker-user-flag[data-approved='true'] {
-    }
-    #${USER_FLAGS_CONTAINER_ID} .bilibili-blocker-user-flag[data-approved='false'] {
-      background: #fffa;
-      color: #333;
-    }
-    #${FLAGGING_LINK_ID} {
-      display: inline-block;
-      margin: 8px 6px;
-      border: 1px solid #fb7299;
-      border-radius: 4px;
-      padding: 2px 6px;
-      background: #fb7299;
-      color: #fff;
-      font-size: 12px;
-      line-height: 18px;
-      text-decoration: none;
-      vertical-align: middle;
-      white-space: nowrap;
-    }
-  `;
+  style.textContent = userFlagsStyle;
   document.head.appendChild(style);
 }
 
