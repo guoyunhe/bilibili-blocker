@@ -8,11 +8,11 @@ import contentStyle from './style.css?raw';
 
 const HIDE_STYLE_ID = 'bilibili-blocker-hide-style';
 const HIDDEN_CLASS = 'bilibili-blocker-hidden';
-const USER_FLAGS_CLASS = 'bilibili-blocker-video-user-flags';
+const USER_FLAGS_CLASS = 'bilibili-blocker-video-account-data';
 const USER_ROW_CLASS = 'bilibili-blocker-video-user-row';
-const USER_FLAGS_ROW_CLASS = 'bilibili-blocker-video-user-flags-row';
-const USER_FLAG_CLASS = 'bilibili-blocker-video-user-flag';
-const USER_RATING_CLASS = 'bilibili-blocker-video-user-rating';
+const USER_FLAGS_ROW_CLASS = 'bilibili-blocker-video-account-flags';
+const USER_FLAG_CLASS = 'bilibili-blocker-video-account-flag';
+const USER_RATING_CLASS = 'bilibili-blocker-video-account-rating';
 const VIDEO_CARD_SELECTOR =
   '.feed-card, .bili-feed-card, .video-page-card-small, .video-page-operator-card-small, .bili-video-card, .video-list-item, .col_3.col_xs_1_5.col_md_2.col_xl_1_7.mb_x40';
 

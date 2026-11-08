@@ -12,13 +12,13 @@
   flex: 1 1 100%;
 }
 
-.bilibili-blocker-video-user-flags {
+.bilibili-blocker-video-account-data {
   display: contents;
   flex: 1 1 0;
   white-space: nowrap;
 }
 
-.bilibili-blocker-video-user-flags-row {
+.bilibili-blocker-video-account-flags {
   position: absolute;
   bottom: -18px;
   left: 0;
@@ -29,7 +29,7 @@
   overflow: hidden;
 }
 
-.bilibili-blocker-video-user-flags-row > .bilibili-blocker-video-user-flag {
+.bilibili-blocker-video-account-flags > .bilibili-blocker-video-account-flag {
   border-radius: 3px;
   padding: 1px 4px;
   background: #f1f2f3;
@@ -39,7 +39,8 @@
   white-space: nowrap;
 }
 
-.bilibili-blocker-video-user-flags > .bilibili-blocker-video-user-rating {
+.bilibili-blocker-video-account-data > .bilibili-blocker-video-account-rating {
   margin-left: 6px;
   font-size: 12px;
+  white-space: nowrap;
 }
