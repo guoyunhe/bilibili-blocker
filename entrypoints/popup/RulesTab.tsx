@@ -18,7 +18,7 @@ function RulesTab({ sources, config, refreshing, onToggle, onRefresh }: RulesTab
       </div>
       <ul className='rule-list'>
         {sources
-          .toSorted((a, b) => a.displayName.localeCompare(b.displayName))
+          .toSorted((a, b) => a.name.localeCompare(b.name))
           .map((source) => {
             const enabled = config[source.name] ?? source.recommended;
             return (
