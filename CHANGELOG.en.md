@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.0 - 2026-11-08
+
+### Added
+
+- Show community ratings and flags for unblocked video-card publishers. Ratings use a color-coded five-star scale with the rating count and link to account details.
+
+### Improved
+
+- Sort popup rule sources by rule code.
+
 ## 0.10.2 - 2026-11-04
 
 ### Added

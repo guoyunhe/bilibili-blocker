@@ -14,30 +14,30 @@ We take your privacy seriously. This policy explains what data the extension han
 
 - No analytics, telemetry, or tracking mechanisms are included.
 - Custom blocklists, whitelists, and cached rules are stored locally in your browser.
-- When you view a Bilibili profile, its public account UID is sent to the Bilibili Blocker service to retrieve its community flags.
+- When you view a Bilibili profile or an unblocked video card, the public account UID is sent to the Bilibili Blocker service to retrieve the account's community rating and flags.
 
 ## Network Requests
 
 The extension makes the following network requests solely to provide its functionality:
 
-| Endpoint                                                   | Purpose                                                                   | Data Sent                                   |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------- |
-| `https://bilibili-blocker.guoyunhe.me/api/flags`           | Fetches the available community flag definitions.                         | None                                        |
-| `https://bilibili-blocker.guoyunhe.me/uploads/rules/*.txt` | Fetches the latest blocking rules for clickbait and AI-generated content. | None                                        |
-| `https://bilibili-blocker.guoyunhe.me/api/accounts/{uid}`  | Fetches community flags for the Bilibili account whose profile you view.  | The public Bilibili account UID in the URL. |
+| Endpoint                                                   | Purpose                                                                                 | Data Sent                                   |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `https://bilibili-blocker.guoyunhe.me/api/flags`           | Fetches the available community flag definitions.                                       | None                                        |
+| `https://bilibili-blocker.guoyunhe.me/uploads/rules/*.txt` | Fetches the latest blocking rules for clickbait and AI-generated content.               | None                                        |
+| `https://bilibili-blocker.guoyunhe.me/api/accounts/{uid}`  | Fetches community ratings and flags for a profile or an unblocked video-card publisher. | The public Bilibili account UID in the URL. |
 
-Flag definition requests are made when the extension loads or refreshes its rule list. Rule requests are made when the extension loads or refreshes blocking rules. User flag requests are made when you view a Bilibili profile. The account UID identifies the public profile being viewed; the extension does not send your Bilibili credentials or browsing history. The flagging page is opened only when you click its link.
+Flag definition requests are made when the extension loads or refreshes its rule list. Rule requests are made when the extension loads or refreshes blocking rules. Account data requests are made for profiles you view and unblocked video-card publishers visible on the page. These requests send the public account UID to retrieve its rating and flags; the extension does not send your Bilibili credentials or browsing history. The account details page is opened only when you click its link.
 
 ## Permissions
 
 The extension requires the following permissions:
 
-- **Host permission (`https://bilibili-blocker.guoyunhe.me/*`)**: Required to fetch blocking rules and user flags from the service.
+- **Host permission (`https://bilibili-blocker.guoyunhe.me/*`)**: Required to fetch blocking rules, ratings, and user flags from the service.
 - **Access to `www.bilibili.com`**: Required to apply the blocking rules on the Bilibili website.
 
 ## Data Sharing
 
-The public account UID is sent to the Bilibili Blocker service only to retrieve flags for the profile you are viewing. The extension does not send your Bilibili credentials or browsing history, and does not use third-party analytics.
+Public account UIDs are sent to the Bilibili Blocker service only to retrieve account ratings and flags for profiles and unblocked video-card publishers. The extension does not send your Bilibili credentials or browsing history, and does not use third-party analytics.
 
 ## Contact
 
