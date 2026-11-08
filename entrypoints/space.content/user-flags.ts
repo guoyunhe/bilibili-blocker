@@ -30,7 +30,7 @@ export async function setupUserFlags(uid: string, detailsTop: Element) {
   if (!flaggingLink) {
     flaggingLink = document.createElement('a');
     flaggingLink.id = FLAGGING_LINK_ID;
-    flaggingLink.textContent = '打标';
+    flaggingLink.textContent = '评分/打标';
     flaggingLink.target = '_blank';
     flaggingLink.rel = 'noreferrer';
   }
