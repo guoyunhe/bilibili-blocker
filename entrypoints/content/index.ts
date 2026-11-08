@@ -1,7 +1,7 @@
 import { browser } from 'wxt/browser';
 
 import { formatRating } from '../../utils/rating';
-import type { UserAccountData } from '../../utils/server-api';
+import { SERVER_URL, type UserAccountData } from '../../utils/server-api';
 import { getUidFromUrl } from '../../utils/uid';
 
 const HIDE_STYLE_ID = 'bilibili-blocker-hide-style';
@@ -102,9 +102,12 @@ function renderUserFlags(link: Element, uid: string, account: UserAccountData) {
   const visibleFlags = account.flags.filter((flag) => flag.status === 'approved' || flag.score > 0);
   if (account.rating === null && visibleFlags.length === 0) return;
 
-  const container = document.createElement('span');
+  const container = document.createElement('a');
   container.className = USER_FLAGS_CLASS;
   container.dataset.uid = uid;
+  container.href = `${SERVER_URL}/accounts/${uid}`;
+  container.target = '_blank';
+  container.rel = 'noreferrer';
   link.parentElement?.classList.add(USER_ROW_CLASS);
   if (account.rating !== null) {
     const rating = document.createElement('span');
