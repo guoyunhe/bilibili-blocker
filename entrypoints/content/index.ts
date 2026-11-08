@@ -1,18 +1,57 @@
 import { browser } from 'wxt/browser';
 
+import { formatRating } from '../../utils/rating';
+import type { UserAccountData } from '../../utils/server-api';
 import { getUidFromUrl } from '../../utils/uid';
 
 const HIDE_STYLE_ID = 'bilibili-blocker-hide-style';
 const HIDDEN_CLASS = 'bilibili-blocker-hidden';
+const USER_FLAGS_CLASS = 'bilibili-blocker-video-user-flags';
+const USER_ROW_CLASS = 'bilibili-blocker-video-user-row';
+const USER_FLAGS_ROW_CLASS = 'bilibili-blocker-video-user-flags-row';
+const USER_FLAG_CLASS = 'bilibili-blocker-video-user-flag';
+const USER_RATING_CLASS = 'bilibili-blocker-video-user-rating';
 const VIDEO_CARD_SELECTOR =
   '.feed-card, .bili-feed-card, .video-page-card-small, .video-page-operator-card-small, .bili-video-card, .video-list-item, .col_3.col_xs_1_5.col_md_2.col_xl_1_7.mb_x40';
 
 function injectHideStyle() {
-  if (document.getElementById(HIDE_STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = HIDE_STYLE_ID;
-  style.textContent = `.${HIDDEN_CLASS} { display: none !important; }`;
-  (document.head ?? document.documentElement).appendChild(style);
+  if (!document.getElementById(HIDE_STYLE_ID)) {
+    const style = document.createElement('style');
+    style.id = HIDE_STYLE_ID;
+    style.textContent = `
+      .${HIDDEN_CLASS} { display: none !important; }
+      .${USER_ROW_CLASS} {
+        position: relative;
+      }
+      .${USER_FLAGS_CLASS} {
+        display: contents;
+      }
+      .${USER_FLAGS_ROW_CLASS} {
+        position: absolute;
+        bottom: -18px;
+        left: 0;
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 4px;
+        overflow: hidden;
+      }
+      .${USER_FLAGS_ROW_CLASS} > .${USER_FLAG_CLASS} {
+        border-radius: 3px;
+        padding: 1px 4px;
+        background: #f1f2f3;
+        color: #61666d;
+        font-size: 11px;
+        line-height: 16px;
+        white-space: nowrap;
+      }
+      .${USER_FLAGS_CLASS} > .${USER_RATING_CLASS} {
+        margin-left: 6px;
+        font-size: 12px;
+      }
+    `;
+    (document.head ?? document.documentElement).appendChild(style);
+  }
 }
 
 function getUidFromLink(link: Element): string | null {
@@ -41,28 +80,103 @@ function isBlockedStatusMap(value: unknown): value is Record<string, boolean> {
   );
 }
 
+function removeUserFlags(link: Element) {
+  const next = link.nextElementSibling;
+  if (next?.classList.contains(USER_FLAGS_CLASS)) next.remove();
+  const parent = link.parentElement;
+  if (parent?.classList.contains(USER_ROW_CLASS) && !parent.querySelector(`.${USER_FLAGS_CLASS}`)) {
+    parent.classList.remove(USER_ROW_CLASS);
+  }
+}
+
+function renderUserFlags(link: Element, uid: string, account: UserAccountData) {
+  const existing = link.nextElementSibling;
+  if (
+    existing?.classList.contains(USER_FLAGS_CLASS) &&
+    existing instanceof HTMLElement &&
+    existing.dataset.uid === uid
+  ) {
+    return;
+  }
+  removeUserFlags(link);
+  const visibleFlags = account.flags.filter((flag) => flag.status === 'approved' || flag.score > 0);
+  if (account.rating === null && visibleFlags.length === 0) return;
+
+  const container = document.createElement('span');
+  container.className = USER_FLAGS_CLASS;
+  container.dataset.uid = uid;
+  link.parentElement?.classList.add(USER_ROW_CLASS);
+  if (account.rating !== null) {
+    const rating = document.createElement('span');
+    rating.className = USER_RATING_CLASS;
+    const formattedRating = formatRating(account.rating);
+    const star = document.createElement('span');
+    star.textContent = '★';
+    star.style.color = formattedRating.color;
+    star.setAttribute('aria-hidden', 'true');
+    const value = document.createElement('span');
+    value.textContent = formattedRating.value;
+    value.style.color = formattedRating.color;
+    rating.setAttribute(
+      'aria-label',
+      `评分 ${formattedRating.value}，${account.ratingCount} 个评分`,
+    );
+    rating.append(star, ' ', value, ` (${account.ratingCount})`);
+    container.append(rating);
+  }
+  if (visibleFlags.length > 0) {
+    const flagsRow = document.createElement('span');
+    flagsRow.className = USER_FLAGS_ROW_CLASS;
+    for (const flag of visibleFlags) {
+      const flagElement = document.createElement('span');
+      flagElement.className = USER_FLAG_CLASS;
+      flagElement.title = flag.description;
+      flagElement.textContent = `${flag.name} (${flag.score})`;
+      flagsRow.append(flagElement);
+    }
+    container.append(flagsRow);
+  }
+  link.insertAdjacentElement('afterend', container);
+}
+
 function processVideoCard(
   card: Element,
   blockedUidCache: Map<string, boolean>,
   requestBlockedStatus: (uid: string) => void,
+  userAccountDataCache: Map<string, UserAccountData>,
+  requestUserAccountData: (uid: string) => void,
 ) {
+  const links = [...card.querySelectorAll('a[href*="space.bilibili.com"]')];
+  const uidLinks: Array<{ link: Element; uid: string }> = [];
   let shouldHide = false;
-  for (const link of card.querySelectorAll('a[href*="space.bilibili.com"]')) {
+  for (const link of links) {
     const uid = getUidFromLink(link);
     if (!uid) continue;
 
+    uidLinks.push({ link, uid });
     if (!blockedUidCache.has(uid)) requestBlockedStatus(uid);
     if (blockedUidCache.get(uid) || link.textContent?.includes('账号已注销')) {
       shouldHide = true;
     }
   }
   card.classList.toggle(HIDDEN_CLASS, shouldHide);
+  for (const { link, uid } of uidLinks) {
+    if (shouldHide) {
+      removeUserFlags(link);
+    } else if (blockedUidCache.get(uid) === false) {
+      const accountData = userAccountDataCache.get(uid);
+      if (accountData) renderUserFlags(link, uid, accountData);
+      else requestUserAccountData(uid);
+    }
+  }
 }
 
 function processUidCards(
   uid: string,
   blockedUidCache: Map<string, boolean>,
   requestBlockedStatus: (uid: string) => void,
+  userAccountDataCache: Map<string, UserAccountData>,
+  requestUserAccountData: (uid: string) => void,
 ) {
   const start = Date.now();
   const cards = new Set<Element>();
@@ -73,7 +187,13 @@ function processUidCards(
   }
 
   for (const card of cards) {
-    processVideoCard(card, blockedUidCache, requestBlockedStatus);
+    processVideoCard(
+      card,
+      blockedUidCache,
+      requestBlockedStatus,
+      userAccountDataCache,
+      requestUserAccountData,
+    );
   }
   console.log(`Processed UID cards for ${uid} in ${Date.now() - start}ms`);
 }
@@ -81,6 +201,8 @@ function processUidCards(
 function processVideoCards(
   blockedUidCache: Map<string, boolean>,
   requestBlockedStatus: (uid: string) => void,
+  userAccountDataCache: Map<string, UserAccountData>,
+  requestUserAccountData: (uid: string) => void,
 ) {
   const start = Date.now();
   const links = document.querySelectorAll('a[href*="space.bilibili.com"]');
@@ -99,12 +221,21 @@ function processVideoCards(
   }
 
   for (const card of cards) {
-    processVideoCard(card, blockedUidCache, requestBlockedStatus);
+    processVideoCard(
+      card,
+      blockedUidCache,
+      requestBlockedStatus,
+      userAccountDataCache,
+      requestUserAccountData,
+    );
     if (card.classList.contains(HIDDEN_CLASS)) hiddenCards.add(card);
   }
 
   for (const uid of blockedUidCache.keys()) {
-    if (!visibleUids.has(uid)) blockedUidCache.delete(uid);
+    if (!visibleUids.has(uid)) {
+      blockedUidCache.delete(uid);
+      userAccountDataCache.delete(uid);
+    }
   }
 
   document.querySelectorAll(`.${HIDDEN_CLASS}`).forEach((card) => {
@@ -119,6 +250,8 @@ export default defineContentScript({
     console.log('Bilibili Blocker content script loaded');
     const blockedUidCache = new Map<string, boolean>();
     const pendingChecks = new Map<string, Promise<void>>();
+    const userAccountDataCache = new Map<string, UserAccountData>();
+    const pendingAccountData = new Map<string, Promise<void>>();
     let rulesVersion = 0;
     const uidVersions = new Map<string, number>();
     injectHideStyle();
@@ -137,7 +270,13 @@ export default defineContentScript({
           if (version !== rulesVersion || uidVersion !== (uidVersions.get(uid) ?? 0)) return;
 
           blockedUidCache.set(uid, isBlocked);
-          processUidCards(uid, blockedUidCache, requestBlockedStatus);
+          processUidCards(
+            uid,
+            blockedUidCache,
+            requestBlockedStatus,
+            userAccountDataCache,
+            requestUserAccountData,
+          );
         })
         .catch((err) => {
           console.error(`Failed to check blocked status for ${uid}:`, err);
@@ -146,6 +285,30 @@ export default defineContentScript({
           if (pendingChecks.get(uid) === request) pendingChecks.delete(uid);
         });
       pendingChecks.set(uid, request);
+    }
+
+    function requestUserAccountData(uid: string) {
+      if (pendingAccountData.has(uid) || userAccountDataCache.has(uid)) return;
+
+      const request = browser.runtime
+        .sendMessage({ type: 'GET_ACCOUNT_DATA', uid })
+        .then((response: unknown) => {
+          userAccountDataCache.set(uid, response as UserAccountData);
+          processUidCards(
+            uid,
+            blockedUidCache,
+            requestBlockedStatus,
+            userAccountDataCache,
+            requestUserAccountData,
+          );
+        })
+        .catch((err) => {
+          console.error(`Failed to load account data for ${uid}:`, err);
+        })
+        .finally(() => {
+          if (pendingAccountData.get(uid) === request) pendingAccountData.delete(uid);
+        });
+      pendingAccountData.set(uid, request);
     }
 
     async function refreshVisibleBlockedStatuses() {
@@ -159,7 +322,12 @@ export default defineContentScript({
         [...visibleUids].map((uid) => [uid, uidVersions.get(uid) ?? 0]),
       );
       if (visibleUids.size === 0) {
-        processVideoCards(blockedUidCache, requestBlockedStatus);
+        processVideoCards(
+          blockedUidCache,
+          requestBlockedStatus,
+          userAccountDataCache,
+          requestUserAccountData,
+        );
         return;
       }
 
@@ -190,7 +358,12 @@ export default defineContentScript({
             blockedUidCache.set(uid, status);
           }
         }
-        processVideoCards(blockedUidCache, requestBlockedStatus);
+        processVideoCards(
+          blockedUidCache,
+          requestBlockedStatus,
+          userAccountDataCache,
+          requestUserAccountData,
+        );
       } catch (err) {
         console.error('Failed to refresh visible blocked statuses:', err);
       }
@@ -218,7 +391,13 @@ export default defineContentScript({
         }
       }
       for (const card of cards) {
-        processVideoCard(card, blockedUidCache, requestBlockedStatus);
+        processVideoCard(
+          card,
+          blockedUidCache,
+          requestBlockedStatus,
+          userAccountDataCache,
+          requestUserAccountData,
+        );
       }
     });
 
@@ -240,7 +419,13 @@ export default defineContentScript({
         uidVersions.set(uid, (uidVersions.get(uid) ?? 0) + 1);
         pendingChecks.delete(uid);
         blockedUidCache.set(uid, message.isBlocked);
-        processUidCards(uid, blockedUidCache, requestBlockedStatus);
+        processUidCards(
+          uid,
+          blockedUidCache,
+          requestBlockedStatus,
+          userAccountDataCache,
+          requestUserAccountData,
+        );
         return;
       }
 

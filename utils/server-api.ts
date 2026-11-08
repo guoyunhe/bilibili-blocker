@@ -12,6 +12,29 @@ export interface UserFlag {
   score: number;
 }
 
+export interface UserAccountData {
+  rating: number | null;
+  ratingCount: number;
+  flags: UserFlag[];
+}
+
+function isUserFlag(value: unknown): value is UserFlag {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'code' in value &&
+    typeof value.code === 'string' &&
+    'name' in value &&
+    typeof value.name === 'string' &&
+    'description' in value &&
+    typeof value.description === 'string' &&
+    'status' in value &&
+    (value.status === null || typeof value.status === 'string') &&
+    'score' in value &&
+    typeof value.score === 'number'
+  );
+}
+
 export async function fetchFlagDefinitions(): Promise<FlagDefinition[]> {
   const response = await fetch(FLAG_DEFINITIONS_API_URL);
   if (!response.ok) {
@@ -22,22 +45,39 @@ export async function fetchFlagDefinitions(): Promise<FlagDefinition[]> {
   return parseFlagDefinitionsResponse(result);
 }
 
-export async function fetchUserFlags(uid: string): Promise<UserFlag[]> {
+export async function fetchUserAccount(uid: string): Promise<UserAccountData> {
   if (!/^\d+$/.test(uid)) {
     throw new Error(`Invalid account UID: ${uid}`);
   }
 
   const response = await fetch(`${SERVER_API_URL}/accounts/${uid}`);
-  if (response.status === 404) return [];
+  if (response.status === 404) return { rating: null, ratingCount: 0, flags: [] };
   if (!response.ok) {
-    throw new Error(`Failed to fetch user flags for ${uid}: ${response.status}`);
+    throw new Error(`Failed to fetch account data for ${uid}: ${response.status}`);
   }
 
-  const result = (await response.json()) as {
-    data?: { flags?: UserFlag[] };
-  };
-  if (!Array.isArray(result.data?.flags)) {
-    throw new Error(`Invalid user flags response for ${uid}`);
+  const result: unknown = await response.json();
+  if (
+    typeof result !== 'object' ||
+    result === null ||
+    !('data' in result) ||
+    typeof result.data !== 'object' ||
+    result.data === null ||
+    !('flags' in result.data) ||
+    !Array.isArray(result.data.flags) ||
+    !result.data.flags.every(isUserFlag) ||
+    !('ratingCount' in result.data) ||
+    typeof result.data.ratingCount !== 'number' ||
+    ('rating' in result.data &&
+      result.data.rating !== null &&
+      typeof result.data.rating !== 'number')
+  ) {
+    throw new Error(`Invalid account data response for ${uid}`);
   }
-  return result.data.flags;
+  return {
+    rating:
+      'rating' in result.data && typeof result.data.rating === 'number' ? result.data.rating : null,
+    ratingCount: result.data.ratingCount,
+    flags: result.data.flags,
+  };
 }

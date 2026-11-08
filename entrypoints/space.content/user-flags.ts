@@ -1,15 +1,10 @@
 import { browser } from 'wxt/browser';
 
+import { formatRating } from '../../utils/rating';
+import type { UserAccountData } from '../../utils/server-api';
+
 export const USER_FLAGS_CONTAINER_ID = 'bilibili-blocker-user-flags';
 const FLAGGING_LINK_ID = 'bilibili-blocker-flagging-link';
-
-interface UserFlag {
-  code: string;
-  name: string;
-  description: string;
-  status: string | null;
-  score: number;
-}
 
 function injectUserFlagsStyle() {
   if (document.getElementById('bilibili-blocker-user-flags-style')) return;
@@ -82,14 +77,31 @@ export async function setupUserFlags(uid: string, detailsTop: Element) {
   flagsContainer.textContent = '标记加载中…';
 
   try {
-    const flags = (await browser.runtime.sendMessage({
-      type: 'GET_USER_FLAGS',
+    const result = (await browser.runtime.sendMessage({
+      type: 'GET_ACCOUNT_DATA',
       uid,
-    })) as UserFlag[];
+    })) as UserAccountData;
     if (flagsContainer.dataset.uid !== uid) return;
-    if (!Array.isArray(flags)) throw new Error('Invalid user flags response');
+    const { rating, flags } = result;
 
     flagsContainer.replaceChildren();
+    if (rating !== null) {
+      const ratingElement = document.createElement('span');
+      const formattedRating = formatRating(rating);
+      const star = document.createElement('span');
+      star.textContent = '★';
+      star.style.color = formattedRating.color;
+      star.setAttribute('aria-hidden', 'true');
+      const value = document.createElement('span');
+      value.textContent = formattedRating.value;
+      value.style.color = formattedRating.color;
+      ratingElement.setAttribute(
+        'aria-label',
+        `评分 ${formattedRating.value}，${result.ratingCount} 个评分`,
+      );
+      ratingElement.append(star, ' ', value, ` (${result.ratingCount})`);
+      flagsContainer.append(ratingElement);
+    }
     for (const flag of flags.filter((item) => item.status === 'approved' || item.score > 0)) {
       const flagElement = document.createElement('span');
       flagElement.className = 'bilibili-blocker-user-flag';
