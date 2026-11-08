@@ -1,2 +1,3 @@
-.video-page-card-small .card-box .info .upname a {
+.video-page-card-small .bilibili-blocker-video-account-flags {
+  display: none; /* no space for account flags */
 }
