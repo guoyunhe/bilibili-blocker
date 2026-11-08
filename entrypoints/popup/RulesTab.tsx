@@ -30,7 +30,9 @@ function RulesTab({ sources, config, refreshing, onToggle, onRefresh }: RulesTab
                     checked={enabled}
                     onChange={(event) => onToggle(source.name, event.target.checked)}
                   />
-                  <span className='rule-name'>{source.displayName}</span>
+                  <span className='rule-name' title={source.description}>
+                    {source.displayName}
+                  </span>
                   <span className='rule-count'>{source.count}</span>
                 </label>
               </li>

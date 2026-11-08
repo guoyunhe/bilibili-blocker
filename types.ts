@@ -1,6 +1,7 @@
 export interface RuleSource {
   name: string;
   displayName: string;
+  description: string;
   url: string;
   count: number;
   recommended: boolean;

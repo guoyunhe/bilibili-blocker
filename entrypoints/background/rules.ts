@@ -35,6 +35,7 @@ function toRuleSources(flags: FlagDefinition[]): RuleSource[] {
   return flags.map((flag) => ({
     name: flag.code,
     displayName: flag.name,
+    description: flag.description,
     url: `${SERVER_URL}/uploads/rules/${flag.code}.txt`,
     count: 0,
     recommended: flag.recommended ?? false,
@@ -133,6 +134,7 @@ async function getCachedActiveRules(importedCode: string): Promise<string[]> {
     sources.push({
       name: importedCode,
       displayName: importedCode,
+      description: '',
       url: '',
       count: 0,
       recommended: true,
